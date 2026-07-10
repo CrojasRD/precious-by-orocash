@@ -209,7 +209,7 @@ export async function sendPasswordReset(email: string) {
     const user = await getUserByEmail(email);
     if (!user) {
       // No revelar si el usuario existe o no (seguridad)
-      return { success: true };
+     return { success: true, error: null };
     }
 
     // Generar link de restablecimiento
@@ -218,10 +218,10 @@ export async function sendPasswordReset(email: string) {
     // TODO: Enviar correo con el link usando Resend, SendGrid, etc.
     console.log(`Password reset link for ${email}:`, link);
 
-    return { success: true };
+    return { success: true, error: null };
   } catch (error: any) {
     console.error("Error sending password reset:", error);
-    return { success: true }; // Respuesta genérica por seguridad
+    return { success: false, error: error.message };
   }
 }
 
