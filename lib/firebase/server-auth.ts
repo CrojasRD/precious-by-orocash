@@ -20,7 +20,7 @@ export async function getUserByEmail(email: string) {
 export async function getUserById(uid: string) {
   try {
     const userDoc = await db.collection('users').doc(uid).get();
-    if (userDoc.exists()) {
+    if (userDoc.exists) {
       return {
         id: userDoc.id,
         ...userDoc.data(),
