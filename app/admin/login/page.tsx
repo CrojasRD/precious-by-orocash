@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Loader2, ShieldCheck } from "lucide-react";
 import { initializeApp, getApp } from "firebase/app";
@@ -8,7 +8,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import { sendPasswordReset } from "@/lib/actions/users";
 
-export default function AdminLoginPage() {
+function AdminLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -124,5 +124,13 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-navy">Cargando...</div>}>
+      <AdminLoginContent />
+    </Suspense>
   );
 }
