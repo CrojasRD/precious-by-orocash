@@ -26,3 +26,9 @@ export async function registerClientDocument(input: {
   //   file_url: input.fileUrl,
   //   file_name: input.fileName,
   //   uploaded_by_email: session.user.email ?? ""
+  // });
+  // if (error) throw error;
+
+  // TODO: Implement proper response
+  return { success: true };
+}
