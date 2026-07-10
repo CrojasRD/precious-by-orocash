@@ -9,9 +9,9 @@ export async function requireRole(allowedRoles: Role[]) {
   // getCurrentUser() is a client-side function and should not be used in server context
   // This should be replaced with proper server-side session verification (e.g., NextAuth, Firebase Admin SDK)
 
-  const user = await getCurrentUser();
+  const user = await getCurrentUser() as { uid: string; role?: string } | null;
 
-  if (!user || !user.uid) {
+  if (!user?.uid) {
     redirect('/admin/login');
   }
 

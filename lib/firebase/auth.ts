@@ -63,11 +63,11 @@ export async function getUserRole(uid: string) {
   }
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<{ uid: string; role?: string } | null> {
   return new Promise((resolve) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       unsubscribe();
-      resolve(user);
+      resolve(user as any);
     });
   });
 }
