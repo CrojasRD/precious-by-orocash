@@ -6,7 +6,6 @@ import { Lock, Loader2, ShieldCheck } from "lucide-react";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { sendPasswordReset } from "@/lib/actions/users";
-import { getUserById } from "@/lib/firebase/server-auth";
 
 function AdminLoginContent() {
   const router = useRouter();
@@ -18,13 +17,16 @@ function AdminLoginContent() {
   const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
+    // Limpiar cualquier dato guardado en storage
+    localStorage.clear();
+    sessionStorage.clear();
+
     // Verificar si ya hay una sesión activa
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // Usuario ya autenticado, obtener su rol
         try {
-          // Esperar un poco para que Firestore esté actualizado
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 300));
 
           const response = await fetch(`/api/auth/verify-role?uid=${user.uid}`);
           if (response.ok) {
@@ -85,8 +87,8 @@ function AdminLoginContent() {
         throw new Error("Error al crear sesión");
       }
 
-      // Esperar a que se actualice Firestore y luego verificar rol
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Esperar a que se actualice y luego verificar rol
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Verificar el rol del usuario
       const roleResponse = await fetch(`/api/auth/verify-role?uid=${result.user.uid}`);
@@ -112,6 +114,10 @@ function AdminLoginContent() {
         },
         body: JSON.stringify({ uid: result.user.uid }),
       });
+
+      // Limpiar los campos antes de redirigir
+      setEmail("");
+      setPassword("");
 
       // Redirigir al dashboard
       const next = searchParams.get("next") || "/admin/dashboard";
@@ -178,11 +184,12 @@ function AdminLoginContent() {
           <input
             type="email"
             required
+            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             className="mb-5 w-full rounded-sm border border-cream/15 bg-transparent px-4 py-3 text-sm text-cream outline-none focus:border-gold-light disabled:opacity-50"
-            placeholder="admin@preciousbyorocash.com"
+            placeholder="correo@ejemplo.com"
           />
 
           <label className="mb-2 block text-xs uppercase tracking-widest2 text-cream/60">
@@ -191,6 +198,7 @@ function AdminLoginContent() {
           <input
             type="password"
             required
+            autoComplete="off"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
