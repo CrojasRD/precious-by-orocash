@@ -1,5 +1,4 @@
 import { adminAuth, db } from './admin-config';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase-admin/firestore';
 
 export async function getUserByEmail(email: string) {
   try {
@@ -20,7 +19,7 @@ export async function getUserByEmail(email: string) {
 
 export async function getUserById(uid: string) {
   try {
-    const userDoc = await getDoc(doc(db, 'users', uid));
+    const userDoc = await db.collection('users').doc(uid).get();
     if (userDoc.exists()) {
       return {
         id: userDoc.id,
@@ -49,7 +48,7 @@ export async function createUser(
     });
 
     // Crear documento en Firestore
-    await setDoc(doc(db, 'users', userRecord.uid), {
+    await db.collection('users').doc(userRecord.uid).set({
       email,
       name,
       role,
@@ -65,7 +64,7 @@ export async function createUser(
 
 export async function updateUserRole(uid: string, role: string) {
   try {
-    await updateDoc(doc(db, 'users', uid), { role });
+    await db.collection('users').doc(uid).update({ role });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

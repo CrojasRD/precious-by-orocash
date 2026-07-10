@@ -1,19 +1,4 @@
 import { db, storage } from './admin-config';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  updateDoc,
-  deleteDoc,
-  addDoc,
-  writeBatch,
-  QueryConstraint,
-} from 'firebase-admin/firestore';
 
 type CollectionName = 'users' | 'appointments' | 'transactions' | 'valuation_reports' | 'client_documents' | 'site_settings';
 
@@ -77,12 +62,11 @@ export async function getAppointmentById(appointmentId: string) {
 
 export async function getAppointmentsByEmail(email: string) {
   try {
-    const q = query(
-      collection(db, 'appointments'),
-      where('email', '==', email),
-      orderBy('appointmentDate', 'desc')
-    );
-    const snapshot = await getDocs(q);
+    const snapshot = await db
+      .collection('appointments')
+      .where('email', '==', email)
+      .orderBy('appointmentDate', 'desc')
+      .get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting appointments:', error);
@@ -92,12 +76,11 @@ export async function getAppointmentsByEmail(email: string) {
 
 export async function getAppointmentsByAdvisor(advisorId: string) {
   try {
-    const q = query(
-      collection(db, 'appointments'),
-      where('assignedAdvisorId', '==', advisorId),
-      orderBy('appointmentDate', 'desc')
-    );
-    const snapshot = await getDocs(q);
+    const snapshot = await db
+      .collection('appointments')
+      .where('assignedAdvisorId', '==', advisorId)
+      .orderBy('appointmentDate', 'desc')
+      .get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting advisor appointments:', error);
@@ -107,12 +90,11 @@ export async function getAppointmentsByAdvisor(advisorId: string) {
 
 export async function getAllAppointments(pageSize = 50) {
   try {
-    const q = query(
-      collection(db, 'appointments'),
-      orderBy('appointmentDate', 'desc'),
-      limit(pageSize)
-    );
-    const snapshot = await getDocs(q);
+    const snapshot = await db
+      .collection('appointments')
+      .orderBy('appointmentDate', 'desc')
+      .limit(pageSize)
+      .get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting all appointments:', error);
@@ -202,12 +184,11 @@ export async function createClientDocument(data: any) {
 
 export async function getClientDocuments(appointmentId: string) {
   try {
-    const q = query(
-      collection(db, 'client_documents'),
-      where('appointmentId', '==', appointmentId),
-      orderBy('createdAt', 'desc')
-    );
-    const snapshot = await getDocs(q);
+    const snapshot = await db
+      .collection('client_documents')
+      .where('appointmentId', '==', appointmentId)
+      .orderBy('createdAt', 'desc')
+      .get();
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting client documents:', error);
