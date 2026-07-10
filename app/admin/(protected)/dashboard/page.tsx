@@ -30,7 +30,7 @@ export default async function DashboardPage() {
         </h1>
       </div>
 
-      <MetricsCards metrics={safeMetrics} />
+      <MetricsCards metrics={metrics} />
     </div>
   );
 }
