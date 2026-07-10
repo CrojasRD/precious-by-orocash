@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { X, Loader2, FileCheck2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import {
   APPOINTMENT_REASON_LABELS,
   APPOINTMENT_STATUS_LABELS,
@@ -52,14 +54,17 @@ export default function AdvisorAppointmentDetailModal({
         let finalReportUrl = reportUrl;
 
         if (reportFile) {
-          const supabase = createClient();
+          const app = initializeApp(FIREBASE_CONFIG);
+          const storage = getStorage(app);
           const ext = reportFile.name.split(".").pop() || "pdf";
-          const path = `${appointment.id}/informe-valoracion-${Date.now()}.${ext}`;
-          const { error: uploadError } = await supabase.storage
-            .from(REPORTS_BUCKET)
-            .upload(path, reportFile, { upsert: true });
-          if (uploadError) throw new Error(uploadError.message);
-          finalReportUrl = path;
+          const path = `${REPORTS_BUCKET}/${appointment.id}/informe-valoracion-${Date.now()}.${ext}`;
+          try {
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, reportFile);
+            finalReportUrl = path;
+          } catch (err: any) {
+            throw new Error(err.message || "Error uploading file to Firebase Storage");
+          }
         }
 
         if (finalReportUrl) {

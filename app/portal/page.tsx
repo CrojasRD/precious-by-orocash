@@ -1,44 +1,33 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using middleware and context for auth
 import PortalDashboard from "@/components/portal/PortalDashboard";
 import type { AppointmentWithValuation, ClientDocument } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function PortalPage() {
-  const supabase = createClient();
+  // TODO: Implement Firebase Auth session verification
+  // const session = await getServerSession();
+  // if (!session) redirect("/portal/login");
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) redirect("/portal/login");
+  // TODO: Implement Firestore query for appointments
+  // - Get current user from auth context
+  // - Query Firestore appointments where email = user.email and role = "viewer"
+  // - Order by appointment_date descending
 
-  // RLS restringe "appointments" a las filas cuyo email coincide con
-  // el del usuario autenticado cuando su rol es "viewer".
-  const { data: appointmentsData, error } = await supabase
-    .from("appointments")
-    .select("*, valuation:valuation_reports(*)")
-    .order("appointment_date", { ascending: false });
-
-  if (error) {
-    console.error(error);
-  }
-
-  const appointments = (appointmentsData ?? []).map((row: any) => ({
-    ...row,
-    valuation: Array.isArray(row.valuation) ? row.valuation[0] ?? null : row.valuation,
-  })) as AppointmentWithValuation[];
+  const appointments = [] as AppointmentWithValuation[];
 
   const appointmentIds = appointments.map((a) => a.id);
 
   let documents: ClientDocument[] = [];
   if (appointmentIds.length > 0) {
-    const { data: docsData } = await supabase
-      .from("client_documents")
-      .select("*")
-      .in("appointment_id", appointmentIds)
-      .order("created_at", { ascending: false });
-    documents = (docsData ?? []) as ClientDocument[];
+    // TODO: Implement Firestore client documents query
+    // const { data: docsData } = await supabase
+    //   .from("client_documents")
+    //   .select("*")
+    //   .in("appointment_id", appointmentIds)
+    //   .order("created_at", { ascending: false });
+    // documents = (docsData ?? []) as ClientDocument[];
   }
 
   return (

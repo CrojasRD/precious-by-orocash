@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using empty array as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import AppointmentsTable from "@/components/admin/AppointmentsTable";
 import type { AppointmentWithTransaction } from "@/lib/types";
@@ -7,24 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function AppointmentsPage() {
   await requireRole(["admin", "recepcion"]);
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("*, transaction:transactions(*)")
-    .order("appointment_date", { ascending: false })
-    .order("appointment_time", { ascending: false });
-
-  if (error) {
-    console.error(error);
-  }
-
-  const appointments = (data ?? []).map((row: any) => ({
-    ...row,
-    transaction: Array.isArray(row.transaction)
-      ? row.transaction[0] ?? null
-      : row.transaction,
-  })) as AppointmentWithTransaction[];
+  // TODO: Implement Firestore query for appointments with transactions
+  // For now, using empty array as fallback
+  const appointments = [] as AppointmentWithTransaction[];
 
   return (
     <div>

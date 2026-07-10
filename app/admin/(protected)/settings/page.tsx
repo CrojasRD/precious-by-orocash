@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using default settings as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import BrandSettingsForm from "@/components/admin/BrandSettingsForm";
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/types";
@@ -7,17 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   await requireRole(["admin", "editor"]);
-  const supabase = createClient();
-  const { data } = await supabase.from("site_settings").select("*").single();
-
-  const settings: SiteSettings = data
-    ? {
-        brand_name: data.brand_name,
-        brand_subtitle: data.brand_subtitle,
-        hero_banner_url: data.hero_banner_url,
-        logo_image_url: data.logo_image_url,
-      }
-    : DEFAULT_SITE_SETTINGS;
+  // TODO: Implement Firestore query for site_settings
+  // For now, using default settings as fallback
+  const settings: SiteSettings = DEFAULT_SITE_SETTINGS;
 
   return (
     <div>

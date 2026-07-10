@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import { sendPasswordReset } from "@/lib/actions/users";
 
 export default function PortalLoginPage() {
@@ -20,15 +22,17 @@ export default function PortalLoginPage() {
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-
-    setLoading(false);
-
-    if (signInError) {
+    try {
+      const app = initializeApp(FIREBASE_CONFIG);
+      const auth = getAuth(app);
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err: any) {
+      setLoading(false);
       setError("Correo o contraseña incorrectos.");
       return;
     }
+
+    setLoading(false);
 
     const next = searchParams.get("next") || "/portal";
     router.push(next);

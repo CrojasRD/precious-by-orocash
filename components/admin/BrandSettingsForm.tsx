@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, Loader2, X, CheckCircle2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { getStorage, ref, uploadBytes, getBytes } from "firebase/storage";
+import { initializeApp } from "firebase/app";
+import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import { updateSiteSettings } from "@/lib/actions/admin";
 import type { SiteSettings } from "@/lib/types";
 
@@ -80,18 +82,19 @@ export default function BrandSettingsForm({
   }
 
   async function uploadToBranding(file: File, prefix: string) {
-    const supabase = createClient();
+    const app = initializeApp(FIREBASE_CONFIG);
+    const storage = getStorage(app);
     const ext = file.name.split(".").pop() || "png";
-    const path = `${prefix}-${Date.now()}.${ext}`;
+    const path = `${BRANDING_BUCKET}/${prefix}-${Date.now()}.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from(BRANDING_BUCKET)
-      .upload(path, file, { upsert: true, cacheControl: "3600" });
-
-    if (uploadError) throw new Error(uploadError.message);
-
-    const { data } = supabase.storage.from(BRANDING_BUCKET).getPublicUrl(path);
-    return data.publicUrl;
+    try {
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      // Return a placeholder URL - in production, configure Firebase Storage CDN
+      return `gs://precious-by-orocash.appspot.com/${path}`;
+    } catch (err: any) {
+      throw new Error(err.message || "Error uploading file to Firebase Storage");
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {

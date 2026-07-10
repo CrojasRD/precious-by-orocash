@@ -10,7 +10,7 @@ import {
   Users,
   LogOut,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { getAuth, signOut } from "firebase/auth";
 import { USER_ROLE_LABELS, type UserRole } from "@/lib/types";
 
 const navItems = [
@@ -33,10 +33,14 @@ export default function AdminSidebar({
   const visibleItems = navItems.filter((item) => item.roles.includes(userRole));
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/admin/login");
-    router.refresh();
+    try {
+      const auth = getAuth();
+      await signOut(auth);
+      router.push("/admin/login");
+      router.refresh();
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
   };
 
   return (

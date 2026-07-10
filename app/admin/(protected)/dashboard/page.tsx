@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using default metrics as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import MetricsCards from "@/components/admin/MetricsCards";
 
@@ -6,13 +6,9 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   await requireRole(["admin"]);
-  const supabase = createClient();
-  const { data: metrics } = await supabase
-    .from("appointment_metrics")
-    .select("*")
-    .single();
-
-  const safeMetrics = metrics ?? {
+  // TODO: Implement Firestore query for appointment_metrics
+  // For now, using default metrics as fallback
+  const metrics = {
     total_appointments: 0,
     pending_count: 0,
     confirmed_count: 0,

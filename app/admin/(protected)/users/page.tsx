@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using empty array as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import UsersTable from "@/components/admin/UsersTable";
 import type { AppUser } from "@/lib/types";
@@ -7,16 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
   await requireRole(["admin"]);
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error(error);
-  }
+  // TODO: Implement Firestore query for users collection
+  // For now, using empty array as fallback
+  const data = [] as AppUser[];
 
   return (
     <div>

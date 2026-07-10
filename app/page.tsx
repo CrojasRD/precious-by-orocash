@@ -6,7 +6,7 @@ import Services from "@/components/sections/Services";
 import Experience from "@/components/sections/Experience";
 import Trust from "@/components/sections/Trust";
 import BookingSection from "@/components/sections/BookingSection";
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using DEFAULT_SITE_SETTINGS as fallback
 import { DEFAULT_SITE_SETTINGS } from "@/lib/types";
 
 // Se lee la sesión de cookies vía createClient(), por lo que Next.js
@@ -14,17 +14,9 @@ import { DEFAULT_SITE_SETTINGS } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const supabase = createClient();
-  const { data } = await supabase.from("site_settings").select("*").single();
-
-  const settings = data
-    ? {
-        brand_name: data.brand_name,
-        brand_subtitle: data.brand_subtitle,
-        hero_banner_url: data.hero_banner_url,
-        logo_image_url: data.logo_image_url,
-      }
-    : DEFAULT_SITE_SETTINGS;
+  // TODO: Implement Firestore query for site_settings
+  // For now, using default settings as fallback
+  const settings = DEFAULT_SITE_SETTINGS;
 
   return (
     <>

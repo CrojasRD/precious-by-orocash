@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+// Firebase imports removed - using empty array as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import AdvisorAppointmentsTable from "@/components/admin/AdvisorAppointmentsTable";
 import type { AppointmentWithValuation } from "@/lib/types";
@@ -6,27 +6,13 @@ import type { AppointmentWithValuation } from "@/lib/types";
 export const dynamic = "force-dynamic";
 
 export default async function MyAppointmentsPage() {
-  // RLS ya restringe la lectura de "appointments" a las citas donde
-  // assigned_advisor_id = auth.uid() para el rol asesor, así que este
-  // select no necesita un .eq() adicional: Supabase solo devuelve lo
-  // permitido por la política.
+  // TODO: Implement Firebase Auth and Firestore queries
+  // - Get current user from auth context
+  // - Query Firestore appointments where assigned_advisor_id = userId
+  // - Query valuation_reports collection
   await requireRole(["admin", "asesor"]);
-  const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("*, valuation:valuation_reports(*)")
-    .order("appointment_date", { ascending: false })
-    .order("appointment_time", { ascending: false });
-
-  if (error) {
-    console.error(error);
-  }
-
-  const appointments = (data ?? []).map((row: any) => ({
-    ...row,
-    valuation: Array.isArray(row.valuation) ? row.valuation[0] ?? null : row.valuation,
-  })) as AppointmentWithValuation[];
+  const appointments = [] as AppointmentWithValuation[];
 
   return (
     <div>

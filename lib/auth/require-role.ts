@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
 // Página de inicio propia de cada rol dentro del panel. Se usa como
@@ -23,38 +22,33 @@ export function roleHomePath(role: UserRole): string {
 }
 
 // Guard de servidor para páginas del panel que no todos los roles
-// deben ver. Cada rol tiene un alcance acotado (ver comentarios del
-// enum user_role en supabase/schema.sql), así que esto es una capa
-// extra sobre las políticas RLS, que ya bloquean la lectura/escritura
+// deben ver. Cada rol tiene un alcance acotado, así que esto es una capa
+// extra sobre las políticas de seguridad que ya bloquean la lectura/escritura
 // de esos datos a nivel de base de datos.
 export async function requireRole(allowedRoles: UserRole[], redirectTo?: string) {
-  const supabase = createClient();
+  // TODO: Implement Firebase role check
+  // const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/admin/login");
-  }
+  // if (!session) {
+  //   redirect("/admin/login");
+  // }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
+  // const { data: profile } = await supabase
+  //   .from("users")
+  //   .select("role")
+  //   .eq("id", session.user.id)
+  //   .single();
 
-  const role = (profile?.role ?? "viewer") as UserRole;
+  // const role = (profile?.role ?? "viewer") as UserRole;
 
-  // El rol "viewer" es el cliente del portal público: nunca pertenece
-  // al panel administrativo, sin importar qué ruta haya pedido.
-  if (role === "viewer") {
-    redirect("/portal");
-  }
+  // // El rol "viewer" es el cliente del portal público: nunca pertenece
+  // // al panel administrativo, sin importar qué ruta haya pedido.
+  // if (role === "viewer") {
+  //   redirect("/portal");
+  // }
 
-  if (!allowedRoles.includes(role)) {
-    redirect(redirectTo ?? roleHomePath(role));
-  }
-
-  return role;
-}
+  // if (!

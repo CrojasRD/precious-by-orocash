@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, UploadCloud, LogOut, FileText, Loader2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { registerClientDocument } from "@/lib/actions/portal";
 import {
   APPOINTMENT_REASON_LABELS,
@@ -25,8 +24,9 @@ export default function PortalDashboard({
   const router = useRouter();
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    // TODO: Implement Firebase signOut
+    // const supabase = createClient();
+    // await supabase.auth.signOut();
     router.push("/portal/login");
     router.refresh();
   };
@@ -79,12 +79,14 @@ function AppointmentCard({
     setDownloading(true);
     setError(null);
     try {
-      const supabase = createClient();
-      const { data, error: signError } = await supabase.storage
-        .from(CLIENT_FILES_BUCKET)
-        .createSignedUrl(appointment.valuation.report_url, 60);
-      if (signError) throw new Error(signError.message);
-      window.open(data.signedUrl, "_blank");
+      // TODO: Implement Firebase Storage download with signed URLs
+      // const supabase = createClient();
+      // const { data, error: signError } = await supabase.storage
+      //   .from(CLIENT_FILES_BUCKET)
+      //   .createSignedUrl(appointment.valuation.report_url, 60);
+      // if (signError) throw new Error(signError.message);
+      // window.open(data.signedUrl, "_blank");
+      setError("Funcionalidad de descarga aún no implementada.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo descargar el informe.");
     } finally {
@@ -98,18 +100,20 @@ function AppointmentCard({
     setUploading(true);
     setError(null);
     try {
-      const supabase = createClient();
-      const path = `${appointment.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from(CLIENT_FILES_BUCKET)
-        .upload(path, file);
-      if (uploadError) throw new Error(uploadError.message);
+      // TODO: Implement Firebase Storage upload
+      // const supabase = createClient();
+      // const path = `${appointment.id}/${Date.now()}-${file.name}`;
+      // const { error: uploadError } = await supabase.storage
+      //   .from(CLIENT_FILES_BUCKET)
+      //   .upload(path, file);
+      // if (uploadError) throw new Error(uploadError.message);
 
-      await registerClientDocument({
-        appointmentId: appointment.id,
-        fileUrl: path,
-        fileName: file.name,
-      });
+      // await registerClientDocument({
+      //   appointmentId: appointment.id,
+      //   fileUrl: path,
+      //   fileName: file.name,
+      // });
+      setError("Funcionalidad de carga aún no implementada.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo subir el documento.");
     } finally {
@@ -183,15 +187,3 @@ function AppointmentCard({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="btn-secondary !py-2.5 text-xs"
-        >
-          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-          Subir documento
-        </button>
-      </div>
-
-      {error && <p className="mt-3 text-xs text-rose-600">{error}</p>}
-    </div>
-  );
-}
