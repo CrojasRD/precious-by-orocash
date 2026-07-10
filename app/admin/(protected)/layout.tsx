@@ -25,7 +25,7 @@ export default async function ProtectedAdminLayout({
   return (
     <div className="flex min-h-screen bg-ivory">
       <AdminSidebar
-        userName={profile?.name ?? session.user.email ?? "Administrador"}
+        userName={profile?.name ?? "Administrador"}
         userRole={profile?.role ?? "editor"}
       />
       <main className="flex-1 overflow-x-hidden px-6 py-8 md:px-10 md:py-10">
