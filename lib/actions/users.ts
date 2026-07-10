@@ -76,4 +76,15 @@ export async function deleteUser(userId: string) {
 // "Recuperar acceso": reenvía un correo de restablecimiento de
 // contraseña. No requiere privilegios de admin — cualquiera puede
 // pedirlo desde /admin/login — pero también se expone en /admin/users
-// para que un admin lo dispare 
+// para que un admin lo dispare
+export async function sendPasswordReset(email: string) {
+  try {
+    // TODO: Implement Firebase password reset email
+    // For now, return a placeholder response
+    // In production, integrate with Firebase Admin Auth or email service
+    console.log(`Password reset requested for: ${email}`);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

@@ -1,4 +1,4 @@
-import { storage } from './config';
+import { storage } from './admin-config';
 import { ref, getBytes, deleteObject } from 'firebase-admin/storage';
 
 const BRANDING_BUCKET = 'branding';

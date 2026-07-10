@@ -1,4 +1,4 @@
-import { adminAuth, db } from './config';
+import { adminAuth, db } from './admin-config';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase-admin/firestore';
 
 export async function getUserByEmail(email: string) {

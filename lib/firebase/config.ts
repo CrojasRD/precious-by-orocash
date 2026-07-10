@@ -1,26 +1,16 @@
-import { initializeApp, getApps, cert, ServiceAccount } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
-import { getStorage } from 'firebase-admin/storage';
+// ============================================
+// FIREBASE CONFIGURATION FOR CLIENT
+// ============================================
+// This config is public and safe to expose in browsers/apps
+// Used in client components only
+//
+// For Firebase Admin SDK (server-only), use lib/firebase/admin-config.ts
 
-// Inicializar Firebase Admin SDK (solo en servidor)
-let adminApp = getApps()[0];
-
-if (!adminApp) {
-  const serviceAccount: ServiceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  };
-
-  adminApp = initializeApp({
-    credential: cert(serviceAccount),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  });
-}
-
-export const adminAuth = getAuth(adminApp);
-export const db = getFirestore(adminApp);
-export const storage = getStorage(adminApp);
-
-export default adminApp;
+export const FIREBASE_CONFIG = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
