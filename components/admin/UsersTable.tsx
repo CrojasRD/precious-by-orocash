@@ -30,7 +30,9 @@ export default function UsersTable({ initialUsers }: { initialUsers: AppUser[] }
     setSuccess(null);
     startTransition(async () => {
       try {
-        await inviteUser({ name, email, role });
+        // TODO: Get actual adminUid from auth context
+        const adminUid = ""; // Temporary - should come from auth session
+        await inviteUser({ name, email, role }, adminUid);
         setSuccess(`Invitación enviada a ${email}.`);
         setName("");
         setEmail("");
@@ -47,7 +49,9 @@ export default function UsersTable({ initialUsers }: { initialUsers: AppUser[] }
     setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, role: newRole } : u)));
     startTransition(async () => {
       try {
-        await updateUserRole(user.id, newRole);
+        // TODO: Get actual adminUid from auth context
+        const adminUid = "";
+        await updateUserRole(user.id, newRole, adminUid);
       } catch (err) {
         setError(err instanceof Error ? err.message : "No se pudo cambiar el rol.");
         router.refresh();
@@ -59,7 +63,9 @@ export default function UsersTable({ initialUsers }: { initialUsers: AppUser[] }
     if (!confirm(`¿Eliminar el acceso de ${user.name}? Esta acción no se puede deshacer.`)) return;
     startTransition(async () => {
       try {
-        await deleteUser(user.id);
+        // TODO: Get actual adminUid from auth context
+        const adminUid = "";
+        await deleteUser(user.id, adminUid);
         setUsers((prev) => prev.filter((u) => u.id !== user.id));
       } catch (err) {
         setError(err instanceof Error ? err.message : "No se pudo eliminar el usuario.");
