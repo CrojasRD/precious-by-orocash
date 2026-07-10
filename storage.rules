@@ -1,0 +1,42 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helpers
+    function isAuth() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuth() && request.auth.token.email != null;
+      // En producción, verificar role en Firestore:
+      // return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function isStaff() {
+      return isAuth();
+      // En producción, verificar si el role está en staff list
+    }
+
+    // ============= BRANDING (Público) =============
+    // Lectura: Pública
+    match /branding/{allPaths=**} {
+      allow read: if true;
+      // Escritura: Solo staff autenticado
+      allow write: if isStaff();
+    }
+
+    // ============= CLIENT FILES (Privado) =============
+    match /client-files/{allPaths=**} {
+      // Lectura: Solo staff autenticado
+      allow read: if isStaff();
+      // Escritura: Solo staff autenticado
+      allow write: if isStaff();
+    }
+
+    // ============= DEFAULT =============
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
