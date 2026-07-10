@@ -16,7 +16,7 @@ export async function createUser(uid: string, data: any) {
 export async function getUserById(uid: string) {
   try {
     const doc = await db.collection('users').doc(uid).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting user:', error);
     return null;
@@ -53,7 +53,7 @@ export async function createAppointment(data: any) {
 export async function getAppointmentById(appointmentId: string) {
   try {
     const doc = await db.collection('appointments').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting appointment:', error);
     return null;
@@ -134,7 +134,7 @@ export async function createOrUpdateTransaction(appointmentId: string, data: any
 export async function getTransaction(appointmentId: string) {
   try {
     const doc = await db.collection('transactions').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting transaction:', error);
     return null;
@@ -161,7 +161,7 @@ export async function createOrUpdateValuationReport(appointmentId: string, data:
 export async function getValuationReport(appointmentId: string) {
   try {
     const doc = await db.collection('valuation_reports').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting valuation report:', error);
     return null;
@@ -210,7 +210,7 @@ export async function deleteClientDocument(docId: string) {
 export async function getSiteSettings() {
   try {
     const doc = await db.collection('site_settings').doc('config').get();
-    return doc.exists() ? doc.data() : null;
+    return doc.exists ? doc.data() : null;
   } catch (error) {
     console.error('Error getting site settings:', error);
     return null;
