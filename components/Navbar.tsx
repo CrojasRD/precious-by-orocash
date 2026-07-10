@@ -30,7 +30,7 @@ export default function Navbar({
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-cream/95 shadow-soft backdrop-blur" : "bg-transparent"
+        scrolled ? "bg-cream/95 shadow-soft backdrop-blur" : "bg-cream"
       }`}
     >
       <div className="container-luxe flex items-center justify-between py-5">
