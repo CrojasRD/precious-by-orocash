@@ -10,7 +10,6 @@ import {
   Users,
   LogOut,
 } from "lucide-react";
-import { getAuth, signOut } from "firebase/auth";
 import { USER_ROLE_LABELS, type UserRole } from "@/lib/types";
 
 const navItems = [
@@ -34,8 +33,9 @@ export default function AdminSidebar({
 
   const handleSignOut = async () => {
     try {
-      const auth = getAuth();
-      await signOut(auth);
+      // Importar dinámicamente para evitar problemas de SSR
+      const { logoutUser } = await import("@/lib/firebase/logout");
+      await logoutUser();
       router.push("/admin/login");
       router.refresh();
     } catch (err) {

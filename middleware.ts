@@ -3,22 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Rutas protegidas de admin
-  if (pathname.startsWith('/admin')) {
-    // Verificar si el usuario tiene sesión
-    const token = request.cookies.get('__session')?.value;
+  // Obtener token de sesión
+  const token = request.cookies.get('__session')?.value;
+  const uid = request.cookies.get('__uid')?.value;
 
-    if (!token && !pathname.startsWith('/admin/login')) {
-      // Si no hay sesión y no está en /admin/login, redirigir
+  // Rutas públicas (login)
+  const isAdminLogin = pathname === '/admin/login';
+  const isPortalLogin = pathname === '/portal/login';
+
+  // Rutas protegidas de admin
+  if (pathname.startsWith('/admin') && !isAdminLogin) {
+    // Si no hay sesión en rutas protegidas, redirigir al login
+    if (!token || !uid) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
   // Rutas protegidas del portal
-  if (pathname.startsWith('/portal')) {
-    const token = request.cookies.get('__session')?.value;
-
-    if (!token && !pathname.startsWith('/portal/login')) {
+  if (pathname.startsWith('/portal') && !isPortalLogin) {
+    // Si no hay sesión en rutas protegidas, redirigir al login
+    if (!token || !uid) {
       return NextResponse.redirect(new URL('/portal/login', request.url));
     }
   }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/lib/firebase/auth-context";
 
 // La tipografía de marca ("Exmouth") se autoaloja vía @font-face en
 // globals.css, ya que no está disponible en Google Fonts. Ver
@@ -37,7 +38,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={body.variable}>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

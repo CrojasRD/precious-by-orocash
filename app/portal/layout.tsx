@@ -2,9 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { useAuth } from "@/lib/firebase/auth-context";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 
-export default function ProtectedAdminLayout({
+export default function PortalLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -24,23 +23,13 @@ export default function ProtectedAdminLayout({
 
   // Verificar que está autenticado
   if (!userRole) {
-    redirect("/admin/login");
+    redirect("/portal/login");
   }
 
-  // Verificar que es admin
-  if (userRole.role !== "admin") {
-    redirect("/portal");
+  // Permitir viewer y admin (admin puede acceder a portal también)
+  if (userRole.role !== "viewer" && userRole.role !== "admin") {
+    redirect("/portal/login");
   }
 
-  return (
-    <div className="flex min-h-screen bg-ivory">
-      <AdminSidebar
-        userName={userRole?.name ?? "Administrador"}
-        userRole={userRole?.role ?? "editor"}
-      />
-      <main className="flex-1 overflow-x-hidden px-6 py-8 md:px-10 md:py-10">
-        {children}
-      </main>
-    </div>
-  );
+  return children;
 }
