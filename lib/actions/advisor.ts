@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+// import { createClient } from "@/lib/supabase/server";
 
 // Acciones exclusivas del rol "asesor" (y admin) sobre sus propias
 // citas asignadas. Las políticas RLS de appointments/valuation_reports
@@ -13,22 +13,23 @@ export async function updateAppointmentAdvisorFields(input: {
   itemDescription: string | null;
   advisorNotes: string | null;
 }) {
-  const supabase = createClient();
+  // TODO: Implement Firestore appointment update
+  // const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) throw new Error("No autorizado.");
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
+  // if (!session) throw new Error("No autorizado.");
 
-  const { error } = await supabase
-    .from("appointments")
-    .update({
-      item_description: input.itemDescription,
-      advisor_notes: input.advisorNotes,
-    })
-    .eq("id", input.appointmentId);
+  // const { error } = await supabase
+  //   .from("appointments")
+  //   .update({
+  //     item_description: input.itemDescription,
+  //     advisor_notes: input.advisorNotes,
+  //   })
+  //   .eq("id", input.appointmentId);
 
-  if (error) throw new Error(error.message);
+  // if (error) throw new Error(error.message);
 
   revalidatePath("/admin/my-appointments");
 }
@@ -39,25 +40,17 @@ export async function upsertValuationReport(input: {
   summary: string | null;
   estimatedValue: number | null;
 }) {
-  const supabase = createClient();
+  // TODO: Implement Firestore valuation report upsert
+  // const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) throw new Error("No autorizado.");
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
+  // if (!session) throw new Error("No autorizado.");
 
-  const { error } = await supabase.from("valuation_reports").upsert(
-    {
-      appointment_id: input.appointmentId,
-      report_url: input.reportUrl,
-      summary: input.summary,
-      estimated_value: input.estimatedValue,
-      created_by: session.user.id,
-    },
-    { onConflict: "appointment_id" }
-  );
-
-  if (error) throw new Error(error.message);
-
-  revalidatePath("/admin/my-appointments");
-}
+  // const { error } = await supabase.from("valuation_reports").upsert(
+  //   {
+  //     appointment_id: input.appointmentId,
+  //     report_url: input.reportUrl,
+  //     summary: input.summary,
+  //     estimated_value: input.estimatedValu

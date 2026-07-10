@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+// import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
 // Página de inicio propia de cada rol dentro del panel. Se usa como
@@ -28,33 +28,29 @@ export function roleHomePath(role: UserRole): string {
 // extra sobre las políticas RLS, que ya bloquean la lectura/escritura
 // de esos datos a nivel de base de datos.
 export async function requireRole(allowedRoles: UserRole[], redirectTo?: string) {
-  const supabase = createClient();
+  // TODO: Implement Firebase role check
+  // const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/admin/login");
-  }
+  // if (!session) {
+  //   redirect("/admin/login");
+  // }
 
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", session.user.id)
-    .single();
+  // const { data: profile } = await supabase
+  //   .from("users")
+  //   .select("role")
+  //   .eq("id", session.user.id)
+  //   .single();
 
-  const role = (profile?.role ?? "viewer") as UserRole;
+  // const role = (profile?.role ?? "viewer") as UserRole;
 
-  // El rol "viewer" es el cliente del portal público: nunca pertenece
-  // al panel administrativo, sin importar qué ruta haya pedido.
-  if (role === "viewer") {
-    redirect("/portal");
-  }
+  // // El rol "viewer" es el cliente del portal público: nunca pertenece
+  // // al panel administrativo, sin importar qué ruta haya pedido.
+  // if (role === "viewer") {
+  //   redirect("/portal");
+  // }
 
-  if (!allowedRoles.includes(role)) {
-    redirect(redirectTo ?? roleHomePath(role));
-  }
-
-  return role;
-}
+  // if (!

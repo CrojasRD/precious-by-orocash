@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { appointmentSchema } from "@/lib/validations/appointment";
-import { createServiceClient } from "@/lib/supabase/server";
+// import { createServiceClient } from "@/lib/supabase/server";
 
 // Rate limiting simple en memoria (por IP). En producción usar
 // Upstash Redis / Vercel KV para que funcione entre instancias serverless.
@@ -48,27 +48,25 @@ export async function POST(request: Request) {
 
   // TODO: validar reCAPTCHA aquí antes de insertar (ver README, sección Seguridad).
 
-  const supabase = createServiceClient();
-  const { error } = await supabase.from("appointments").insert({
-    full_name: appointmentData.full_name,
-    identification_number: appointmentData.identification_number,
-    phone: appointmentData.phone,
-    email: appointmentData.email,
-    appointment_reason: appointmentData.appointment_reason,
-    appointment_date: appointmentData.appointment_date,
-    appointment_time: appointmentData.appointment_time,
-    additional_comment: appointmentData.additional_comment || null,
-  });
+  // TODO: Implement Firestore appointment insert
+  // const supabase = createServiceClient();
+  // const { error } = await supabase.from("appointments").insert({
+  //   full_name: appointmentData.full_name,
+  //   identification_number: appointmentData.identification_number,
+  //   phone: appointmentData.phone,
+  //   email: appointmentData.email,
+  //   appointment_reason: appointmentData.appointment_reason,
+  //   appointment_date: appointmentData.appointment_date,
+  //   appointment_time: appointmentData.appointment_time,
+  //   additional_comment: appointmentData.additional_comment || null,
+  // });
 
-  if (error) {
-    console.error("Error al registrar cita:", error);
-    return NextResponse.json(
-      { message: "No se pudo registrar la cita. Intenta nuevamente." },
-      { status: 500 }
-    );
-  }
+  // if (error) {
+  //   console.error("Error al registrar cita:", error);
+  //   return NextResponse.json(
+  //     { message: "No se pudo registrar la cita. Intenta nuevamente." },
+  //     { status: 500 }
+  //   );
+  // }
 
-  // TODO: enviar email/WhatsApp de confirmación al cliente y notificación al staff.
-
-  return NextResponse.json({ message: "Cita registrada correctamente." }, { status: 201 });
-}
+  // TODO: enviar email/WhatsApp de confirmación al cliente y notificació

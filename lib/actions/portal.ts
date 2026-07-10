@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+// import { createClient } from "@/lib/supabase/server";
 
 // Acciones del portal del cliente (rol "viewer"). El archivo ya se
 // sube a Storage desde el cliente (browser) porque requiere leer el
@@ -13,21 +13,16 @@ export async function registerClientDocument(input: {
   fileUrl: string;
   fileName: string;
 }) {
-  const supabase = createClient();
+  // TODO: Implement Firestore document registration
+  // const supabase = createClient();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (!session) throw new Error("No autorizado.");
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
+  // if (!session) throw new Error("No autorizado.");
 
-  const { error } = await supabase.from("client_documents").insert({
-    appointment_id: input.appointmentId,
-    file_url: input.fileUrl,
-    file_name: input.fileName,
-    uploaded_by_email: session.user.email ?? "",
-  });
-
-  if (error) throw new Error(error.message);
-
-  revalidatePath("/portal");
-}
+  // const { error } = await supabase.from("client_documents").insert({
+  //   appointment_id: input.appointmentId,
+  //   file_url: input.fileUrl,
+  //   file_name: input.fileName,
+  //   uploaded_by_email: session.user.email ?? ""
