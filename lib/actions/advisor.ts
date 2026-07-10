@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+// import { createClient } from "@/lib/supabase/server";
 
 // Acciones exclusivas del rol "asesor" (y admin) sobre sus propias
 // citas asignadas. Las políticas RLS de appointments/valuation_reports

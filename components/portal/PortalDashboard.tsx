@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, UploadCloud, LogOut, FileText, Loader2 } from "lucide-react";
+// import { createClient } from "@/lib/supabase/client";
 import { registerClientDocument } from "@/lib/actions/portal";
 import {
   APPOINTMENT_REASON_LABELS,

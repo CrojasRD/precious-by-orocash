@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
 // Página de inicio propia de cada rol dentro del panel. Se usa como
@@ -22,8 +23,9 @@ export function roleHomePath(role: UserRole): string {
 }
 
 // Guard de servidor para páginas del panel que no todos los roles
-// deben ver. Cada rol tiene un alcance acotado, así que esto es una capa
-// extra sobre las políticas de seguridad que ya bloquean la lectura/escritura
+// deben ver. Cada rol tiene un alcance acotado (ver comentarios del
+// enum user_role en supabase/schema.sql), así que esto es una capa
+// extra sobre las políticas RLS, que ya bloquean la lectura/escritura
 // de esos datos a nivel de base de datos.
 export async function requireRole(allowedRoles: UserRole[], redirectTo?: string) {
   // TODO: Implement Firebase role check

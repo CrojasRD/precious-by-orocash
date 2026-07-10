@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+// import { createClient } from "@/lib/supabase/server";
 import type { AppointmentStatus, TransactionType } from "@/lib/types";
 
 // Todas las mutaciones usan el cliente de servidor con la sesión del
-// usuario autenticado: las políticas de seguridad garantizan que
+// usuario autenticado: las políticas RLS de Supabase garantizan que
 // solo el staff logueado pueda escribir en appointments/transactions.
 
 export async function updateAppointmentStatus(
@@ -70,7 +71,7 @@ export async function upsertTransaction(input: {
 }
 
 // Guarda el logotipo (texto y/o imagen) y el banner del hero.
-// La subida del archivo a Firebase Storage ocurre en el cliente
+// La subida del archivo a Supabase Storage ocurre en el cliente
 // (BrandSettingsForm); esta acción solo persiste las URLs resultantes.
 export async function updateSiteSettings(input: {
   brandName: string;

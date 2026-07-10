@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { appointmentSchema } from "@/lib/validations/appointment";
+// import { createServiceClient } from "@/lib/supabase/server";
 
 // Rate limiting simple en memoria (por IP). En producción usar
-// un servicio distribuido como Upstash Redis o Vercel KV.
+// Upstash Redis / Vercel KV para que funcione entre instancias serverless.
 const requestLog = new Map<string, number[]>();
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 5;

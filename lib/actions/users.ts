@@ -1,12 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+// import { createClient, createServiceClient } from "@/lib/supabase/server";
 import type { UserRole } from "@/lib/types";
 
-// Todas las acciones de esta gestión de usuarios verifican primero
-// que quien la ejecuta es realmente "admin". Solo después realizan
-// las operaciones que requieren privilegios de administrador
-// (crear/invitar/borrar usuarios).
+// Todas las acciones de esta gestión de usuarios verifican primero,
+// con el cliente de sesión normal (respeta RLS), que quien la ejecuta
+// es realmente "admin". Solo después usan el cliente service-role
+// para las operaciones que requieren privilegios de Supabase Auth
+// (crear/invitar/borrar usuarios), que no están disponibles vía RLS.
 async function assertAdmin() {
   // TODO: Implement Firebase admin check
   // const supabase = createClient();
@@ -26,8 +28,10 @@ async function assertAdmin() {
   // }
 }
 
-// Crea el usuario y le envía un correo de invitación
-// para que establezca su propia contraseña.
+// Crea el usuario en Supabase Auth y le envía un correo de invitación
+// para que establezca su propia contraseña. El trigger
+// handle_new_auth_user() crea automáticamente la fila en public.users
+// leyendo el rol desde raw_user_meta_data.
 export async function inviteUser(input: { name: string; email: string; role: UserRole }) {
   // TODO: Implement Firebase user invitation
   await assertAdmin();
@@ -56,7 +60,8 @@ export async function updateUserRole(userId: string, role: UserRole) {
   revalidatePath("/admin/users");
 }
 
-// Elimina el usuario y sus datos asociados.
+// Elimina el usuario de Supabase Auth; la fila de public.users se
+// borra en cascada (on delete cascade en users.id → auth.users.id).
 export async function deleteUser(userId: string) {
   // TODO: Implement Firebase user deletion
   await assertAdmin();
