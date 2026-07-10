@@ -53,4 +53,7 @@ export async function requireRole(allowedRoles: UserRole[], redirectTo?: string)
   //   redirect("/portal");
   // }
 
-  // if (!
+  // if (!allowedRoles.includes(role)) {
+  //   redirect(redirectTo || roleHomePath(role));
+  // }
+}

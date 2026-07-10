@@ -188,3 +188,19 @@ function AppointmentCard({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="btn-secondary !py-2.5 text-xs"
+        >
+          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
+          Subir documento
+        </button>
+
+        {error && (
+          <p className="mt-3 text-sm text-red-600">
+            {error}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -53,4 +53,12 @@ export async function upsertValuationReport(input: {
   //     appointment_id: input.appointmentId,
   //     report_url: input.reportUrl,
   //     summary: input.summary,
-  //     estimated_value: input.estimatedValu
+  //     estimated_value: input.estimatedValue,
+  //   },
+  //   { onConflict: "appointment_id" }
+  // );
+
+  // if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/my-appointments");
+}

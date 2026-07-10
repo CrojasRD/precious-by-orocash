@@ -69,4 +69,10 @@ export async function POST(request: Request) {
   //   );
   // }
 
-  // TODO: enviar email/WhatsApp de confirmación al cliente y notificació
+  // TODO: enviar email/WhatsApp de confirmación al cliente y notificación al staff
+
+  return NextResponse.json(
+    { message: "Cita registrada exitosamente." },
+    { status: 201 }
+  );
+}

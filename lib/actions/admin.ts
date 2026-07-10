@@ -95,4 +95,12 @@ export async function updateSiteSettings(input: {
   //   .from("site_settings")
   //   .update({
   //     brand_name: input.brandName.trim(),
-  //  
+  //     brand_subtitle: input.brandSubtitle.trim(),
+  //     hero_banner_url: input.heroBannerUrl,
+  //     logo_image_url: input.logoImageUrl,
+  //   });
+
+  // if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/settings");
+}
