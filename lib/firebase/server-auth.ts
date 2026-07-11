@@ -1,9 +1,9 @@
-import { adminAuth, db } from './config';
+import { adminAuth, db as getDb } from './admin-config';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase-admin/firestore';
 
 export async function getUserByEmail(email: string) {
   try {
-    const usersSnapshot = await db.collection('users').where('email', '==', email).get();
+    const usersSnapshot = await getDb().collection('users').where('email', '==', email).get();
     if (usersSnapshot.empty) {
       return null;
     }
@@ -20,7 +20,7 @@ export async function getUserByEmail(email: string) {
 
 export async function getUserById(uid: string) {
   try {
-    const userDoc = await getDoc(doc(db, 'users', uid));
+    const userDoc = await getDoc(doc(getDb(), 'users', uid));
     if (userDoc.exists()) {
       return {
         id: userDoc.id,
@@ -49,7 +49,7 @@ export async function createUser(
     });
 
     // Crear documento en Firestore
-    await setDoc(doc(db, 'users', userRecord.uid), {
+    await setDoc(doc(getDb(), 'users', userRecord.uid), {
       email,
       name,
       role,
@@ -65,7 +65,7 @@ export async function createUser(
 
 export async function updateUserRole(uid: string, role: string) {
   try {
-    await updateDoc(doc(db, 'users', uid), { role });
+    await updateDoc(doc(getDb(), 'users', uid), { role });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -75,7 +75,7 @@ export async function updateUserRole(uid: string, role: string) {
 export async function deleteUser(uid: string) {
   try {
     await adminAuth.deleteUser(uid);
-    await db.collection('users').doc(uid).delete();
+    await getDb().collection('users').doc(uid).delete();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -87,6 +87,4 @@ export async function sendPasswordReset(email: string) {
     const link = await adminAuth.generatePasswordResetLink(email);
     return { success: true, link };
   } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}
+    return { succes
