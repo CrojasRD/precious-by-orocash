@@ -1,9 +1,12 @@
 import * as admin from 'firebase-admin';
 import { cert } from 'firebase-admin/app';
+import type { Auth } from 'firebase-admin/auth';
+import type { Firestore } from 'firebase-admin/firestore';
+import type { Storage } from 'firebase-admin/storage';
 
-let adminApp: any;
+let adminApp: admin.app.App | undefined;
 
-function initializeFirebase() {
+function initializeFirebase(): admin.app.App {
   if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
     adminApp = admin.initializeApp({
       credential: cert({
@@ -17,17 +20,17 @@ function initializeFirebase() {
   return admin.app();
 }
 
-export const adminAuth = () => {
+export const adminAuth = (): Auth => {
   const app = initializeFirebase();
   return admin.auth(app);
 };
 
-export const db = () => {
+export const db = (): Firestore => {
   const app = initializeFirebase();
   return admin.firestore(app);
 };
 
-export const storage = () => {
+export const storage = (): Storage => {
   const app = initializeFirebase();
   return admin.storage(app);
 };
