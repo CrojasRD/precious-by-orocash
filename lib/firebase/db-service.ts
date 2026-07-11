@@ -1,4 +1,19 @@
-import { db, storage } from './admin-config';
+import { db, storage } from './config';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  updateDoc,
+  deleteDoc,
+  addDoc,
+  writeBatch,
+  QueryConstraint,
+} from 'firebase-admin/firestore';
 
 type CollectionName = 'users' | 'appointments' | 'transactions' | 'valuation_reports' | 'client_documents' | 'site_settings';
 
@@ -16,7 +31,7 @@ export async function createUser(uid: string, data: any) {
 export async function getUserById(uid: string) {
   try {
     const doc = await db.collection('users').doc(uid).get();
-    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting user:', error);
     return null;
@@ -53,7 +68,7 @@ export async function createAppointment(data: any) {
 export async function getAppointmentById(appointmentId: string) {
   try {
     const doc = await db.collection('appointments').doc(appointmentId).get();
-    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting appointment:', error);
     return null;
@@ -62,11 +77,12 @@ export async function getAppointmentById(appointmentId: string) {
 
 export async function getAppointmentsByEmail(email: string) {
   try {
-    const snapshot = await db
-      .collection('appointments')
-      .where('email', '==', email)
-      .orderBy('appointmentDate', 'desc')
-      .get();
+    const q = query(
+      collection(db, 'appointments'),
+      where('email', '==', email),
+      orderBy('appointmentDate', 'desc')
+    );
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting appointments:', error);
@@ -76,11 +92,12 @@ export async function getAppointmentsByEmail(email: string) {
 
 export async function getAppointmentsByAdvisor(advisorId: string) {
   try {
-    const snapshot = await db
-      .collection('appointments')
-      .where('assignedAdvisorId', '==', advisorId)
-      .orderBy('appointmentDate', 'desc')
-      .get();
+    const q = query(
+      collection(db, 'appointments'),
+      where('assignedAdvisorId', '==', advisorId),
+      orderBy('appointmentDate', 'desc')
+    );
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting advisor appointments:', error);
@@ -90,11 +107,12 @@ export async function getAppointmentsByAdvisor(advisorId: string) {
 
 export async function getAllAppointments(pageSize = 50) {
   try {
-    const snapshot = await db
-      .collection('appointments')
-      .orderBy('appointmentDate', 'desc')
-      .limit(pageSize)
-      .get();
+    const q = query(
+      collection(db, 'appointments'),
+      orderBy('appointmentDate', 'desc'),
+      limit(pageSize)
+    );
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting all appointments:', error);
@@ -134,7 +152,7 @@ export async function createOrUpdateTransaction(appointmentId: string, data: any
 export async function getTransaction(appointmentId: string) {
   try {
     const doc = await db.collection('transactions').doc(appointmentId).get();
-    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting transaction:', error);
     return null;
@@ -161,7 +179,7 @@ export async function createOrUpdateValuationReport(appointmentId: string, data:
 export async function getValuationReport(appointmentId: string) {
   try {
     const doc = await db.collection('valuation_reports').doc(appointmentId).get();
-    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting valuation report:', error);
     return null;
@@ -184,11 +202,12 @@ export async function createClientDocument(data: any) {
 
 export async function getClientDocuments(appointmentId: string) {
   try {
-    const snapshot = await db
-      .collection('client_documents')
-      .where('appointmentId', '==', appointmentId)
-      .orderBy('createdAt', 'desc')
-      .get();
+    const q = query(
+      collection(db, 'client_documents'),
+      where('appointmentId', '==', appointmentId),
+      orderBy('createdAt', 'desc')
+    );
+    const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
     console.error('Error getting client documents:', error);
@@ -210,7 +229,7 @@ export async function deleteClientDocument(docId: string) {
 export async function getSiteSettings() {
   try {
     const doc = await db.collection('site_settings').doc('config').get();
-    return doc.exists ? doc.data() : null;
+    return doc.exists() ? doc.data() : null;
   } catch (error) {
     console.error('Error getting site settings:', error);
     return null;
