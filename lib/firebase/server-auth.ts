@@ -83,7 +83,7 @@ export async function deleteUser(uid: string) {
 
 export async function sendPasswordReset(email: string) {
   try {
-    const link = await adminAuth.generatePasswordResetLink(email);
+    const link = await adminAuth().generatePasswordResetLink(email);
     return { success: true, link };
   } catch (error: any) {
     return { success: false, error: error.message };
