@@ -168,7 +168,7 @@ export async function uploadFile(filePath: string, file: Buffer) {
   try {
     const bucket = getStorage().bucket();
     await bucket.file(filePath).save(file);
-    return { success: true, url: gs:/// };
+    return { success: true, url: `gs://${bucket.name}/${filePath}` };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
