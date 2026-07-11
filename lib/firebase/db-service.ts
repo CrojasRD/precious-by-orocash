@@ -1,4 +1,4 @@
-﻿import { db as getDb, storage as getStorage } from './admin-config';
+import { db as getDb, storage as getStorage } from './admin-config';
 
 type CollectionName = 'users' | 'appointments' | 'transactions' | 'valuation_reports' | 'client_documents' | 'site_settings';
 
