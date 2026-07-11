@@ -8,7 +8,7 @@ import type { UserRole } from "@/lib/types";
 async function assertAdmin(uid: string) {
   try {
     const userDoc = await db.collection("users").doc(uid).get();
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       throw new Error("Usuario no encontrado");
     }
 
@@ -209,7 +209,7 @@ export async function sendPasswordReset(email: string) {
     const user = await getUserByEmail(email);
     if (!user) {
       // No revelar si el usuario existe o no (seguridad)
-     return { success: true, error: null };
+      return { success: true, error: null };
     }
 
     // Generar link de restablecimiento
