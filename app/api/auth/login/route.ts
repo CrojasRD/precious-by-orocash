@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar el token con Firebase Admin SDK
     try {
-      await adminAuth.verifyIdToken(token);
+      await adminAuth().verifyIdToken(token);
     } catch (error) {
       return NextResponse.json(
         { error: 'Token inválido' },
