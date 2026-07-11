@@ -7,7 +7,7 @@ import type { UserRole } from "@/lib/types";
 // Verifica que el usuario que hace la acción es un admin
 async function assertAdmin(uid: string) {
   try {
-    const userDoc = await db.collection("users").doc(uid).get();
+    const userDoc = await db().collection("users").doc(uid).get();
     if (!userDoc.exists) {
       throw new Error("Usuario no encontrado");
     }
@@ -34,14 +34,14 @@ export async function createUser(
     if (!input.role) throw new Error("Selecciona un rol para el usuario.");
 
     // Crear usuario en Firebase Auth
-    const userRecord = await adminAuth.createUser({
+    const userRecord = await adminAuth().createUser({
       email: input.email.trim(),
       password: input.password || "TempPassword123!",
       displayName: input.name.trim(),
     });
 
     // Crear documento en Firestore
-    await db.collection("users").doc(userRecord.uid).set({
+    await db().collection("users").doc(userRecord.uid).set({
       email: input.email.trim(),
       name: input.name.trim(),
       role: input.role,
@@ -51,7 +51,7 @@ export async function createUser(
     });
 
     // Generar link de restablecimiento de contraseña para primer login
-    const link = await adminAuth.generatePasswordResetLink(input.email.trim());
+    const link = await adminAuth().generatePasswordResetLink(input.email.trim());
 
     revalidatePath("/admin/users");
     return { success: true, uid: userRecord.uid, resetLink: link };
@@ -63,7 +63,7 @@ export async function createUser(
 // Obtiene un usuario por email
 export async function getUserByEmail(email: string): Promise<any> {
   try {
-    const snapshot = await db.collection("users").where("email", "==", email.trim()).get();
+    const snapshot = await db().collection("users").where("email", "==", email.trim()).get();
 
     if (snapshot.empty) {
       return null;
@@ -83,7 +83,7 @@ export async function getUserByEmail(email: string): Promise<any> {
 // Obtiene un usuario por UID
 export async function getUserById(uid: string) {
   try {
-    const doc = await db.collection("users").doc(uid).get();
+    const doc = await db().collection("users").doc(uid).get();
 
     if (!doc.exists) {
       return null;
@@ -161,7 +161,7 @@ export async function updateUserRole(userId: string, role: UserRole, adminUid: s
   try {
     await assertAdmin(adminUid);
 
-    const userRef = db.collection("users").doc(userId);
+    const userRef = db().collection("users").doc(userId);
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
@@ -186,10 +186,10 @@ export async function deleteUser(userId: string, adminUid: string) {
     await assertAdmin(adminUid);
 
     // Eliminar de Firebase Auth
-    await adminAuth.deleteUser(userId);
+    await adminAuth().deleteUser(userId);
 
     // Eliminar de Firestore
-    await db.collection("users").doc(userId).delete();
+    await db().collection("users").doc(userId).delete();
 
     revalidatePath("/admin/users");
     return { success: true };
@@ -213,7 +213,7 @@ export async function sendPasswordReset(email: string) {
     }
 
     // Generar link de restablecimiento
-    const link = await adminAuth.generatePasswordResetLink(email.trim());
+    const link = await adminAuth().generatePasswordResetLink(email.trim());
 
     // TODO: Enviar correo con el link usando Resend, SendGrid, etc.
     console.log(`Password reset link for ${email}:`, link);
@@ -228,7 +228,7 @@ export async function sendPasswordReset(email: string) {
 // Actualiza el último login del usuario
 export async function updateLastLogin(uid: string) {
   try {
-    await db.collection("users").doc(uid).update({
+    await db().collection("users").doc(uid).update({
       lastLogin: new Date().toISOString(),
     });
   } catch (error: any) {
