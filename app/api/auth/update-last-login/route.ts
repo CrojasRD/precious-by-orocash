@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Actualizar último login
-    await db.collection('users').doc(uid).update({
+    await db().collection('users').doc(uid).update({
       lastLogin: new Date().toISOString(),
     });
 

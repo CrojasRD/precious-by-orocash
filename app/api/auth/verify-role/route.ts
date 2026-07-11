@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Obtener documento del usuario de Firestore
-    const userDoc = await db.collection('users').doc(uid).get();
+    const userDoc = await db().collection('users').doc(uid).get();
 
     if (!userDoc.exists) {
       return NextResponse.json(
