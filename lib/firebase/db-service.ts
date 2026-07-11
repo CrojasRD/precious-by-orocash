@@ -1,23 +1,20 @@
-import { db, storage } from './config';
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  updateDoc,
-  deleteDoc,
-  addDoc,
-  writeBatch,
-  QueryConstraint,
-} from 'firebase-admin/firestore';
+﻿import { db as getDb, storage as getStorage } from './admin-config';
+
+const db = new Proxy({}, {
+  get: (target, prop) => {
+    const firestore = getDb();
+    return (firestore as any)[prop];
+  }
+});
+
+const storage = new Proxy({}, {
+  get: (target, prop) => {
+    const firestorage = getStorage();
+    return (firestorage as any)[prop];
+  }
+});
 
 type CollectionName = 'users' | 'appointments' | 'transactions' | 'valuation_reports' | 'client_documents' | 'site_settings';
-
-// ============= USERS =============
 
 export async function createUser(uid: string, data: any) {
   try {
@@ -31,7 +28,7 @@ export async function createUser(uid: string, data: any) {
 export async function getUserById(uid: string) {
   try {
     const doc = await db.collection('users').doc(uid).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting user:', error);
     return null;
@@ -40,24 +37,27 @@ export async function getUserById(uid: string) {
 
 export async function updateUser(uid: string, data: any) {
   try {
-    await db.collection('users').doc(uid).update({
-      ...data,
-      updatedAt: new Date(),
-    });
+    await db.collection('users').doc(uid).update(data);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-// ============= APPOINTMENTS =============
+export async function deleteUser(uid: string) {
+  try {
+    await db.collection('users').doc(uid).delete();
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
 
 export async function createAppointment(data: any) {
   try {
     const docRef = await db.collection('appointments').add({
       ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
     });
     return { success: true, id: docRef.id };
   } catch (error: any) {
@@ -68,81 +68,37 @@ export async function createAppointment(data: any) {
 export async function getAppointmentById(appointmentId: string) {
   try {
     const doc = await db.collection('appointments').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting appointment:', error);
     return null;
   }
 }
 
-export async function getAppointmentsByEmail(email: string) {
-  try {
-    const q = query(
-      collection(db, 'appointments'),
-      where('email', '==', email),
-      orderBy('appointmentDate', 'desc')
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error('Error getting appointments:', error);
-    return [];
-  }
-}
-
-export async function getAppointmentsByAdvisor(advisorId: string) {
-  try {
-    const q = query(
-      collection(db, 'appointments'),
-      where('assignedAdvisorId', '==', advisorId),
-      orderBy('appointmentDate', 'desc')
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error('Error getting advisor appointments:', error);
-    return [];
-  }
-}
-
-export async function getAllAppointments(pageSize = 50) {
-  try {
-    const q = query(
-      collection(db, 'appointments'),
-      orderBy('appointmentDate', 'desc'),
-      limit(pageSize)
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error('Error getting all appointments:', error);
-    return [];
-  }
-}
-
 export async function updateAppointment(appointmentId: string, data: any) {
   try {
-    await db.collection('appointments').doc(appointmentId).update({
-      ...data,
-      updatedAt: new Date(),
-    });
+    await db.collection('appointments').doc(appointmentId).update(data);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-// ============= TRANSACTIONS =============
-
-export async function createOrUpdateTransaction(appointmentId: string, data: any) {
+export async function deleteAppointment(appointmentId: string) {
   try {
-    await db.collection('transactions').doc(appointmentId).set(
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { merge: true }
-    );
+    await db.collection('appointments').doc(appointmentId).delete();
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function createTransaction(appointmentId: string, data: any) {
+  try {
+    await db.collection('transactions').doc(appointmentId).set({
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -152,24 +108,144 @@ export async function createOrUpdateTransaction(appointmentId: string, data: any
 export async function getTransaction(appointmentId: string) {
   try {
     const doc = await db.collection('transactions').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting transaction:', error);
     return null;
   }
 }
 
-// ============= VALUATION REPORTS =============
-
-export async function createOrUpdateValuationReport(appointmentId: string, data: any) {
+export async function createValuationReport(appointmentId: string, data: any) {
   try {
-    await db.collection('valuation_reports').doc(appointmentId).set(
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { merge: true }
-    );
+    await db.collection('valuation_reports').doc(appointmentId).set({
+      ...data,# En PowerShell, ejecuta esto:
+cd C:\precious-by-orocash
+
+# Crear el archivo db-service.ts correcto:
+@"
+import { db as getDb, storage as getStorage } from './admin-config';
+
+const db = new Proxy({}, {
+  get: (target, prop) => {
+    const firestore = getDb();
+    return (firestore as any)[prop];
+  }
+});
+
+const storage = new Proxy({}, {
+  get: (target, prop) => {
+    const firestorage = getStorage();
+    return (firestorage as any)[prop];
+  }
+});
+
+type CollectionName = 'users' | 'appointments' | 'transactions' | 'valuation_reports' | 'client_documents' | 'site_settings';
+
+export async function createUser(uid: string, data: any) {
+  try {
+    await db.collection('users').doc(uid).set(data);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getUserById(uid: string) {
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+  } catch (error) {
+    console.error('Error getting user:', error);
+    return null;
+  }
+}
+
+export async function updateUser(uid: string, data: any) {
+  try {
+    await db.collection('users').doc(uid).update(data);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteUser(uid: string) {
+  try {
+    await db.collection('users').doc(uid).delete();
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function createAppointment(data: any) {
+  try {
+    const docRef = await db.collection('appointments').add({
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return { success: true, id: docRef.id };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getAppointmentById(appointmentId: string) {
+  try {
+    const doc = await db.collection('appointments').doc(appointmentId).get();
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+  } catch (error) {
+    console.error('Error getting appointment:', error);
+    return null;
+  }
+}
+
+export async function updateAppointment(appointmentId: string, data: any) {
+  try {
+    await db.collection('appointments').doc(appointmentId).update(data);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteAppointment(appointmentId: string) {
+  try {
+    await db.collection('appointments').doc(appointmentId).delete();
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function createTransaction(appointmentId: string, data: any) {
+  try {
+    await db.collection('transactions').doc(appointmentId).set({
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getTransaction(appointmentId: string) {
+  try {
+    const doc = await db.collection('transactions').doc(appointmentId).get();
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
+  } catch (error) {
+    console.error('Error getting transaction:', error);
+    return null;
+  }
+}
+
+export async function createValuationReport(appointmentId: string, data: any) {
+  try {
+    await db.collection('valuation_reports').doc(appointmentId).set({
+      ...data,
+      createdAt: new Date().toISOString(),
+    });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -179,39 +255,23 @@ export async function createOrUpdateValuationReport(appointmentId: string, data:
 export async function getValuationReport(appointmentId: string) {
   try {
     const doc = await db.collection('valuation_reports').doc(appointmentId).get();
-    return doc.exists() ? { id: doc.id, ...doc.data() } : null;
+    return doc.exists ? { id: doc.id, ...doc.data() } : null;
   } catch (error) {
     console.error('Error getting valuation report:', error);
     return null;
   }
 }
 
-// ============= CLIENT DOCUMENTS =============
-
-export async function createClientDocument(data: any) {
+export async function uploadClientDocument(appointmentId: string, data: any) {
   try {
     const docRef = await db.collection('client_documents').add({
       ...data,
-      createdAt: new Date(),
+      appointmentId,
+      createdAt: new Date().toISOString(),
     });
     return { success: true, id: docRef.id };
   } catch (error: any) {
     return { success: false, error: error.message };
-  }
-}
-
-export async function getClientDocuments(appointmentId: string) {
-  try {
-    const q = query(
-      collection(db, 'client_documents'),
-      where('appointmentId', '==', appointmentId),
-      orderBy('createdAt', 'desc')
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  } catch (error) {
-    console.error('Error getting client documents:', error);
-    return [];
   }
 }
 
@@ -224,28 +284,39 @@ export async function deleteClientDocument(docId: string) {
   }
 }
 
-// ============= SITE SETTINGS =============
-
 export async function getSiteSettings() {
   try {
     const doc = await db.collection('site_settings').doc('config').get();
-    return doc.exists() ? doc.data() : null;
+    return doc.exists ? doc.data() : null;
   } catch (error) {
     console.error('Error getting site settings:', error);
     return null;
   }
 }
 
-export async function updateSiteSettings(uid: string, data: any) {
+export async function updateSiteSettings(data: any) {
   try {
-    await db.collection('site_settings').doc('config').set(
-      {
-        ...data,
-        updatedAt: new Date(),
-        updatedBy: uid,
-      },
-      { merge: true }
-    );
+    await db.collection('site_settings').doc('config').set(data, { merge: true });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function uploadFile(filePath: string, file: Buffer) {
+  try {
+    const bucket = storage.bucket();
+    await bucket.file(filePath).save(file);
+    return { success: true, url: gs:/// };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteFile(filePath: string) {
+  try {
+    const bucket = storage.bucket();
+    await bucket.file(filePath).delete();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
