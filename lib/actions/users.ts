@@ -61,7 +61,7 @@ export async function createUser(
 }
 
 // Obtiene un usuario por email
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(email: string): Promise<any> {
   try {
     const snapshot = await db.collection("users").where("email", "==", email.trim()).get();
 
