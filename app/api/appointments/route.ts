@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { appointmentSchema } from "@/lib/validations/appointment";
-// import { createServiceClient } from "@/lib/supabase/server";
+import { db } from "@/lib/firebase/admin-config";
 
 // Rate limiting simple en memoria (por IP). En producción usar
 // Upstash Redis / Vercel KV para que funcione entre instancias serverless.
@@ -38,8 +38,22 @@ export async function POST(request: Request) {
 
   const parsed = appointmentSchema.safeParse(body);
   if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    console.error("❌ Validation FAILED");
+    console.error("Field errors:", fieldErrors);
+    console.error("Received data:", {
+      full_name: body.full_name,
+      identification_number: body.identification_number,
+      phone: body.phone,
+      email: body.email,
+      appointment_reason: body.appointment_reason,
+      appointment_date: body.appointment_date,
+      appointment_time: body.appointment_time,
+      additional_comment: body.additional_comment,
+      website: body.website,
+    });
     return NextResponse.json(
-      { message: "Datos inválidos.", errors: parsed.error.flatten() },
+      { message: "Datos inválidos.", errors: fieldErrors },
       { status: 422 }
     );
   }
@@ -48,31 +62,42 @@ export async function POST(request: Request) {
 
   // TODO: validar reCAPTCHA aquí antes de insertar (ver README, sección Seguridad).
 
-  // TODO: Implement Firestore appointment insert
-  // const supabase = createServiceClient();
-  // const { error } = await supabase.from("appointments").insert({
-  //   full_name: appointmentData.full_name,
-  //   identification_number: appointmentData.identification_number,
-  //   phone: appointmentData.phone,
-  //   email: appointmentData.email,
-  //   appointment_reason: appointmentData.appointment_reason,
-  //   appointment_date: appointmentData.appointment_date,
-  //   appointment_time: appointmentData.appointment_time,
-  //   additional_comment: appointmentData.additional_comment || null,
-  // });
+  try {
+    const appointmentRef = db().collection("appointments").doc();
+    const now = new Date().toISOString();
 
-  // if (error) {
-  //   console.error("Error al registrar cita:", error);
-  //   return NextResponse.json(
-  //     { message: "No se pudo registrar la cita. Intenta nuevamente." },
-  //     { status: 500 }
-  //   );
-  // }
+    await appointmentRef.set({
+      fullName: appointmentData.full_name,
+      identificationNumber: appointmentData.identification_number,
+      phone: appointmentData.phone,
+      email: appointmentData.email,
+      appointmentReason: appointmentData.appointment_reason,
+      appointmentDate: appointmentData.appointment_date,
+      appointmentTime: appointmentData.appointment_time,
+      additionalComment: appointmentData.additional_comment || null,
+      appointmentStatus: "pendiente",
+      assignedAdvisorId: null,
+      itemDescription: null,
+      advisorNotes: null,
+      createdAt: now,
+      updatedAt: now,
+      metadata: {
+        createdBy: "anonymous",
+        ipAddress: request.headers.get("x-forwarded-for") || "unknown",
+      },
+    });
 
-  // TODO: enviar email/WhatsApp de confirmación al cliente y notificación al staff
+    // TODO: enviar email/WhatsApp de confirmación al cliente y notificación al staff
 
-  return NextResponse.json(
-    { message: "Cita registrada exitosamente." },
-    { status: 201 }
-  );
+    return NextResponse.json(
+      { message: "Cita registrada exitosamente." },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error al registrar cita:", error);
+    return NextResponse.json(
+      { message: "No se pudo registrar la cita. Intenta nuevamente." },
+      { status: 500 }
+    );
+  }
 }

@@ -1,167 +1,111 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helpers
     function isAuth() {
       return request.auth != null;
     }
-    
+
     function isAdmin() {
       return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    
+
     function isEditor() {
       return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'editor';
     }
-    
+
     function isAdvisor() {
       return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'asesor';
     }
-    
+
     function isReception() {
       return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'recepcion';
     }
-    
+
     function isViewer() {
       return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'viewer';
     }
-    
+
     function isStaff() {
       return isAdmin() || isEditor() || isAdvisor() || isReception();
     }
-    
+
     function isAssignedAdvisor(appointmentId) {
       let appointment = get(/databases/$(database)/documents/appointments/$(appointmentId)).data;
       return isAuth() && appointment.assignedAdvisorId == request.auth.uid;
     }
-    
+
     function isClientByEmail(email) {
       return isAuth() && request.auth.token.email == email;
     }
 
     // ============= USERS =============
     match /users/{userId} {
-      // Crear: Solo admin (desde Server Action)
       allow create: if false;
-      
-      // Leer: El usuario a sí mismo + Admin
       allow read: if isAuth() && (request.auth.uid == userId || isAdmin());
-      
-      // Actualizar: Solo admin (excepto lastLogin en trigger)
       allow update: if isAdmin();
-      
-      // Eliminar: Solo admin
       allow delete: if isAdmin();
     }
 
     // ============= APPOINTMENTS =============
     match /appointments/{appointmentId} {
-      // Crear: Público (sin auth) para formulario, o admin/staff
-      allow create: if !isAuth() || isStaff() {
-        allow request.resource.data.keys() to contain only [
-          'fullName', 'identificationNumber', 'phone', 'email',
-          'appointmentReason', 'appointmentDate', 'appointmentTime',
-          'additionalComment', 'appointmentStatus', 'assignedAdvisorId',
-          'itemDescription', 'advisorNotes', 'createdAt', 'updatedAt', 'metadata'
-        ];
-        allow request.resource.data.appointmentStatus in ['pendiente', 'confirmada', 'atendida', 'no_asistio', 'cancelada'];
-        allow request.resource.data.appointmentReason in ['valuar', 'inversion', 'liquidar', 'asesoria_patrimonial', 'otro'];
-      }
-      
-      // Leer:
-      // - Público: puede ver solo si tiene el email de una cita
-      // - Admin/Recepción: todo
-      // - Asesor: solo sus asignadas
-      // - Viewer: solo su email
+      allow create: if !isAuth() || isStaff();
+
       allow read: if isAuth() && (
         isAdmin() ||
         isReception() ||
         isAssignedAdvisor(appointmentId) ||
         (isViewer() && resource.data.email == request.auth.token.email)
       );
-      
-      // Actualizar: Admin, Recepción, Asesor asignado
-      allow update: if isAuth() && (isAdmin() || isReception() || isAssignedAdvisor(appointmentId)) {
-        allow request.resource.data.keys() to contain only [
-          'fullName', 'identificationNumber', 'phone', 'email',
-          'appointmentReason', 'appointmentDate', 'appointmentTime',
-          'additionalComment', 'appointmentStatus', 'assignedAdvisorId',
-          'itemDescription', 'advisorNotes', 'createdAt', 'updatedAt', 'metadata'
-        ];
-        // Asesor no puede cambiar estado, solo admin/recepción
-        allow request.resource.data.appointmentStatus to change to let newStatus in ['pendiente', 'confirmada', 'atendida', 'no_asistio', 'cancelada'] if (isAdmin() || isReception());
-      }
-      
-      // Eliminar: Solo admin
+
+      allow update: if isAuth() && (isAdmin() || isReception() || isAssignedAdvisor(appointmentId));
+
       allow delete: if isAdmin();
     }
 
     // ============= TRANSACTIONS =============
     match /transactions/{appointmentId} {
-      // Crear/Actualizar: Solo admin
       allow write: if isAdmin();
-      
-      // Leer: Solo admin y recepción (sin ver monto si es viewer)
       allow read: if isAuth() && (isAdmin() || isReception());
-      
-      // Eliminar: Solo admin
       allow delete: if isAdmin();
     }
 
     // ============= VALUATION REPORTS =============
     match /valuation_reports/{appointmentId} {
-      // Crear/Actualizar: Asesor asignado + Admin
       allow write: if isAuth() && (isAdmin() || isAssignedAdvisor(appointmentId));
-      
-      // Leer:
-      // - Admin: todo
-      // - Asesor: solo los suyos
-      // - Cliente: solo de su cita (por email)
+
       allow read: if isAuth() && (
         isAdmin() ||
         isAssignedAdvisor(appointmentId) ||
         (isViewer() && get(/databases/$(database)/documents/appointments/$(appointmentId)).data.email == request.auth.token.email)
       );
-      
-      // Eliminar: Solo admin
+
       allow delete: if isAdmin();
     }
 
     // ============= CLIENT DOCUMENTS =============
     match /client_documents/{docId} {
-      // Crear: Cliente (por email) + Admin
       allow create: if isAuth() && (
         isAdmin() ||
         isClientByEmail(get(/databases/$(database)/documents/appointments/$(request.resource.data.appointmentId)).data.email)
       );
-      
-      // Leer: Admin, Asesor asignado, Cliente (por email)
+
       allow read: if isAuth() && (
         isAdmin() ||
         isAssignedAdvisor(resource.data.appointmentId) ||
         (isViewer() && get(/databases/$(database)/documents/appointments/$(resource.data.appointmentId)).data.email == request.auth.token.email)
       );
-      
-      // Actualizar: No permitido (documentos inmutables)
+
       allow update: if false;
-      
-      // Eliminar: Solo admin
       allow delete: if isAdmin();
     }
 
     // ============= SITE SETTINGS =============
     match /site_settings/{document=**} {
-      // Crear: No permitido (configurar manualmente en Firebase)
       allow create: if false;
-      
-      // Leer: Público (landing lo necesita)
       allow read: if true;
-      
-      // Actualizar: Admin + Editor
       allow update: if isAuth() && (isAdmin() || isEditor());
-      
-      // Eliminar: No permitido
       allow delete: if false;
     }
 

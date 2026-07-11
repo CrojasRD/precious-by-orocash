@@ -144,10 +144,11 @@ export default function BookingForm() {
       </Field>
 
       <Field label="Motivo de la cita" error={errors.appointment_reason?.message}>
-        <select className="input-luxe" defaultValue="" {...register("appointment_reason")}>
-          <option value="" disabled>
-            Selecciona una opción
-          </option>
+        <select
+          className="input-luxe"
+          {...register("appointment_reason", { required: "Selecciona el motivo de tu cita" })}
+        >
+          <option value="">Selecciona una opción</option>
           {Object.entries(APPOINTMENT_REASON_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
               {label}
@@ -157,10 +158,11 @@ export default function BookingForm() {
       </Field>
 
       <Field label="Hora de visita" error={errors.appointment_time?.message}>
-        <select className="input-luxe" defaultValue="" {...register("appointment_time")}>
-          <option value="" disabled>
-            Selecciona una hora
-          </option>
+        <select
+          className="input-luxe"
+          {...register("appointment_time", { required: "Selecciona una hora" })}
+        >
+          <option value="">Selecciona una hora</option>
           {TIME_SLOTS.map((t) => (
             <option key={t.value} value={t.value}>
               {t.label}
