@@ -1,5 +1,4 @@
 import { adminAuth, db as getDb } from './admin-config';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase-admin/firestore';
 
 export async function getUserByEmail(email: string) {
   try {
@@ -20,7 +19,7 @@ export async function getUserByEmail(email: string) {
 
 export async function getUserById(uid: string) {
   try {
-    const userDoc = await getDoc(doc(getDb(), 'users', uid));
+    const userDoc = await getDb().collection('users').doc(uid).get();
     if (userDoc.exists()) {
       return {
         id: userDoc.id,
@@ -42,14 +41,14 @@ export async function createUser(
 ) {
   try {
     // Crear usuario en Auth
-    const userRecord = await adminAuth.createUser({
+    const userRecord = await adminAuth().createUser({
       email,
       password,
       displayName: name,
     });
 
     // Crear documento en Firestore
-    await setDoc(doc(getDb(), 'users', userRecord.uid), {
+    await getDb().collection('users').doc(userRecord.uid).set({
       email,
       name,
       role,
@@ -65,7 +64,7 @@ export async function createUser(
 
 export async function updateUserRole(uid: string, role: string) {
   try {
-    await updateDoc(doc(getDb(), 'users', uid), { role });
+    await getDb().collection('users').doc(uid).update({ role });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -74,7 +73,7 @@ export async function updateUserRole(uid: string, role: string) {
 
 export async function deleteUser(uid: string) {
   try {
-    await adminAuth.deleteUser(uid);
+    await adminAuth().deleteUser(uid);
     await getDb().collection('users').doc(uid).delete();
     return { success: true };
   } catch (error: any) {
@@ -87,4 +86,6 @@ export async function sendPasswordReset(email: string) {
     const link = await adminAuth.generatePasswordResetLink(email);
     return { success: true, link };
   } catch (error: any) {
-    return { succes
+    return { success: false, error: error.message };
+  }
+}
