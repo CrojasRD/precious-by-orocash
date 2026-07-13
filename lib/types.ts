@@ -103,10 +103,10 @@ export interface SiteSettings {
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  brand_name: "PRECIOUS",
-  brand_subtitle: "by Orocash",
-  hero_banner_url: null,
-  logo_image_url: null,
+  brandName: "PRECIOUS",
+  brandSubtitle: "by Orocash",
+  heroBannerUrl: null,
+  logoImageUrl: null,
 };
 
 export type UserRole = "admin" | "editor" | "asesor" | "recepcion" | "viewer";
