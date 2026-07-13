@@ -1,14 +1,13 @@
-// Firebase imports removed - using default metrics as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import MetricsCards from "@/components/admin/MetricsCards";
+import { db } from "@/lib/firebase/admin-config";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   await requireRole(["admin"]);
-  // TODO: Implement Firestore query for appointment_metrics
-  // For now, using default metrics as fallback
-  const metrics = {
+
+  let metrics = {
     total_appointments: 0,
     pending_count: 0,
     confirmed_count: 0,
@@ -20,6 +19,53 @@ export default async function DashboardPage() {
     total_sales: 0,
     total_value: 0,
   };
+
+  try {
+    // Fetch all appointments
+    const appointmentsSnapshot = await db().collection("appointments").get();
+    const appointments = appointmentsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as any[];
+
+    metrics.total_appointments = appointments.length;
+    metrics.pending_count = appointments.filter(
+      (a) => a.appointmentStatus === "pendiente"
+    ).length;
+    metrics.confirmed_count = appointments.filter(
+      (a) => a.appointmentStatus === "confirmada"
+    ).length;
+    metrics.attended_count = appointments.filter(
+      (a) => a.appointmentStatus === "atendida"
+    ).length;
+    metrics.no_show_count = appointments.filter(
+      (a) => a.appointmentStatus === "no_asistio"
+    ).length;
+    metrics.cancelled_count = appointments.filter(
+      (a) => a.appointmentStatus === "cancelada"
+    ).length;
+
+    // Fetch all transactions
+    const transactionsSnapshot = await db().collection("transactions").get();
+    const transactions = transactionsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as any[];
+
+    metrics.transactions_count = transactions.filter(
+      (t) => t.transactionCompleted
+    ).length;
+    metrics.total_purchases = transactions
+      .filter((t) => t.transactionCompleted && t.transactionType === "compra")
+      .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
+    metrics.total_sales = transactions
+      .filter((t) => t.transactionCompleted && t.transactionType === "venta")
+      .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
+    metrics.total_value =
+      metrics.total_purchases + metrics.total_sales;
+  } catch (error) {
+    console.error("Error fetching metrics:", error);
+  }
 
   return (
     <div>

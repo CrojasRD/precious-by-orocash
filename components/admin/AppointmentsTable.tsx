@@ -69,63 +69,76 @@ export default function AppointmentsTable({
   return (
     <div>
       {/* Filtros */}
-      <div className="mb-6 grid grid-cols-1 gap-4 rounded-sm border border-navy/10 bg-cream p-5 shadow-soft sm:grid-cols-2 lg:grid-cols-6">
-        <div className="relative lg:col-span-2">
+      <div className="mb-6 rounded-sm border border-navy/10 bg-cream p-6 shadow-soft space-y-4">
+        {/* Fila 1: Búsqueda */}
+        <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-navy/40" />
           <input
             type="text"
             placeholder="Buscar por nombre, cédula, correo o celular"
-            className="input-luxe pl-9"
+            className="input-luxe w-full pl-9"
             value={filters.search}
             onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
           />
         </div>
 
-        <select
-          className="input-luxe"
-          value={filters.status}
-          onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value as Filters["status"] }))}
-        >
-          <option value="todas">Todos los estados</option>
-          {Object.entries(APPOINTMENT_STATUS_LABELS).map(([v, l]) => (
-            <option key={v} value={v}>{l}</option>
-          ))}
-        </select>
-
-        <select
-          className="input-luxe"
-          value={filters.reason}
-          onChange={(e) => setFilters((f) => ({ ...f, reason: e.target.value as Filters["reason"] }))}
-        >
-          <option value="todos">Todos los motivos</option>
-          {Object.entries(APPOINTMENT_REASON_LABELS).map(([v, l]) => (
-            <option key={v} value={v}>{l}</option>
-          ))}
-        </select>
-
-        <select
-          className="input-luxe"
-          value={filters.transactionType}
-          onChange={(e) => setFilters((f) => ({ ...f, transactionType: e.target.value as Filters["transactionType"] }))}
-        >
-          <option value="todas">Toda transacción</option>
-          <option value="compra">Compra</option>
-          <option value="venta">Venta</option>
-        </select>
-
-        <div className="flex gap-2">
-          <input
-            type="date"
+        {/* Fila 2: Selectores */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <select
             className="input-luxe"
-            value={filters.dateFrom}
-            onChange={(e) => setFilters((f) => ({ ...f, dateFrom: e.target.value }))}
-          />
-          <input
-            type="date"
+            value={filters.status}
+            onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value as Filters["status"] }))}
+          >
+            <option value="todas">Todos los estados</option>
+            {Object.entries(APPOINTMENT_STATUS_LABELS).map(([v, l]) => (
+              <option key={v} value={v}>{l}</option>
+            ))}
+          </select>
+
+          <select
             className="input-luxe"
-            value={filters.dateTo}
-            onChange={(e) => setFilters((f) => ({ ...f, dateTo: e.target.value }))}
-          />
+            value={filters.reason}
+            onChange={(e) => setFilters((f) => ({ ...f, reason: e.target.value as Filters["reason"] }))}
+          >
+            <option value="todos">Todos los motivos</option>
+            {Object.entries(APPOINTMENT_REASON_LABELS).map(([v, l]) => (
+              <option key={v} value={v}>{l}</option>
+            ))}
+          </select>
+
+          <select
+            className="input-luxe"
+            value={filters.transactionType}
+            onChange={(e) => setFilters((f) => ({ ...f, transactionType: e.target.value as Filters["transactionType"] }))}
+          >
+            <option value="todas">Toda transacción</option>
+            <option value="compra">Compra</option>
+            <option value="venta">Venta</option>
+          </select>
+
+          <div></div>
+        </div>
+
+        {/* Fila 3: Fechas */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="block text-xs uppercase tracking-widest2 text-navy/60 mb-1">Desde</label>
+            <input
+              type="date"
+              className="input-luxe w-full"
+              value={filters.dateFrom}
+              onChange={(e) => setFilters((f) => ({ ...f, dateFrom: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className="block text-xs uppercase tracking-widest2 text-navy/60 mb-1">Hasta</label>
+            <input
+              type="date"
+              className="input-luxe w-full"
+              value={filters.dateTo}
+              onChange={(e) => setFilters((f) => ({ ...f, dateTo: e.target.value }))}
+            />
+          </div>
         </div>
       </div>
 
