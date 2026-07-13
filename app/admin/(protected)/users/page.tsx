@@ -5,24 +5,35 @@ export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
   let data: AppUser[] = [];
+  let error: string | null = null;
 
   try {
     const usersSnapshot = await db().collection("users").get();
 
-    if (!usersSnapshot.empty) {
-      data = usersSnapshot.docs.map((doc) => {
-        const userData = doc.data();
-        return {
-          id: doc.id,
-          name: userData.name || "",
-          email: userData.email || "",
-          role: userData.role || "viewer",
-          created_at: userData.createdAt || userData.created_at || new Date().toISOString(),
-        } as AppUser;
-      });
+    if (usersSnapshot.empty) {
+      data = [];
+    } else {
+      data = usersSnapshot.docs
+        .map((doc) => {
+          try {
+            const userData = doc.data();
+            return {
+              id: doc.id,
+              name: userData.name || "—",
+              email: userData.email || "—",
+              role: userData.role || "viewer",
+              created_at: userData.createdAt || userData.created_at || "—",
+            } as AppUser;
+          } catch (docError) {
+            console.error(`Error mapping user ${doc.id}:`, docError);
+            return null;
+          }
+        })
+        .filter((user) => user !== null) as AppUser[];
     }
-  } catch (error) {
-    console.error("Error fetching users:", error);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    error = "No se pudieron cargar los usuarios";
   }
 
   return (
@@ -33,9 +44,15 @@ export default async function UsersPage() {
           Gestión de usuarios
         </h1>
         <p className="mt-2 max-w-xl text-sm text-navy/60">
-          Total de usuarios en el sistema.
+          Total de usuarios en el sistema: {data.length}
         </p>
       </div>
+
+      {error && (
+        <div className="mb-6 rounded-sm border border-rose-300 bg-rose-50 p-4 text-sm text-rose-700">
+          {error}
+        </div>
+      )}
 
       <div className="overflow-x-auto rounded-sm border border-navy/10 bg-cream shadow-soft">
         <table className="w-full min-w-[720px] text-left text-sm">
@@ -59,7 +76,7 @@ export default async function UsersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-4 text-navy/60 text-xs">
-                    {user.created_at || "—"}
+                    {user.created_at}
                   </td>
                 </tr>
               ))

@@ -6,11 +6,10 @@ import { db } from "@/lib/firebase/admin-config";
 export const dynamic = "force-dynamic";
 
 export default async function AppointmentsPage() {
-  await requireRole(["admin", "recepcion"]);
-
   let appointments: AppointmentWithTransaction[] = [];
 
   try {
+    await requireRole(["admin", "recepcion"]);
     // Fetch appointments from Firestore
     const appointmentsSnapshot = await db()
       .collection("appointments")
