@@ -81,33 +81,54 @@ export default function BrandSettingsForm({
     if (logoInputRef.current) logoInputRef.current.value = "";
   }
 
-  async function uploadToBranding(file: File, prefix: string) {
+  async function uploadToBranding(file: File, prefix: string): Promise<string> {
     try {
+      console.log(`[${prefix}] Starting upload, file size: ${file.size} bytes`);
+
       const app = initializeApp(FIREBASE_CONFIG);
       const storage = getStorage(app);
-      const ext = file.name.split(".").pop() || "png";
-      const path = `${BRANDING_BUCKET}/${prefix}-${Date.now()}.${ext}`;
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const timestamp = Date.now();
+      const filename = `${prefix}-${timestamp}.${ext}`;
+      const path = `${BRANDING_BUCKET}/${filename}`;
 
-      console.log(`Uploading ${prefix} to: ${path}`);
+      console.log(`[${prefix}] Upload path: ${path}`);
 
       const storageRef = ref(storage, path);
 
-      // Upload file
-      const uploadResult = await uploadBytes(storageRef, file);
-      console.log(`Upload successful:`, uploadResult);
+      // Upload file with metadata
+      const uploadResult = await uploadBytes(storageRef, file, {
+        contentType: file.type,
+        cacheControl: "public, max-age=31536000",
+      });
+
+      console.log(`[${prefix}] Upload completed:`, {
+        bucket: uploadResult.metadata.bucket,
+        name: uploadResult.metadata.name,
+        size: uploadResult.metadata.size,
+      });
 
       // Get the public download URL
       const downloadUrl = await getDownloadURL(storageRef);
-      console.log(`Download URL: ${downloadUrl}`);
+      console.log(`[${prefix}] Download URL obtained:`, downloadUrl);
 
       return downloadUrl;
     } catch (err: any) {
-      console.error(`Upload error for ${prefix}:`, err);
-      throw new Error(
-        err.code === "storage/unauthorized"
-          ? "Permiso denegado. Verifica las reglas de Firebase Storage."
-          : err.message || "Error subiendo archivo a Firebase Storage"
-      );
+      console.error(`[${prefix}] Upload error:`, {
+        code: err.code,
+        message: err.message,
+        serverResponse: err.serverResponse,
+      });
+
+      if (err.code === "storage/unauthorized") {
+        throw new Error("No tienes permiso para subir archivos. Verifica las reglas de Firebase Storage.");
+      } else if (err.code === "storage/invalid-argument") {
+        throw new Error("Archivo inválido. Verifica que sea una imagen válida.");
+      } else if (err.code === "storage/unauthenticated") {
+        throw new Error("Debes estar autenticado para subir archivos.");
+      }
+
+      throw new Error(`Error subiendo ${prefix}: ${err.message || "Error desconocido"}`);
     }
   }
 

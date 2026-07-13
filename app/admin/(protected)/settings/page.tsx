@@ -1,15 +1,27 @@
-// Firebase imports removed - using default settings as fallback
-import { requireRole } from "@/lib/auth/require-role";
+import { db } from "@/lib/firebase/admin-config";
 import BrandSettingsForm from "@/components/admin/BrandSettingsForm";
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  await requireRole(["admin", "editor"]);
-  // TODO: Implement Firestore query for site_settings
-  // For now, using default settings as fallback
-  const settings: SiteSettings = DEFAULT_SITE_SETTINGS;
+  let settings: SiteSettings = DEFAULT_SITE_SETTINGS;
+
+  try {
+    const doc = await db().collection("site_settings").doc("config").get();
+    if (doc.exists) {
+      const data = doc.data();
+      settings = {
+        brandName: data?.brandName || DEFAULT_SITE_SETTINGS.brandName,
+        brandSubtitle: data?.brandSubtitle || DEFAULT_SITE_SETTINGS.brandSubtitle,
+        heroBannerUrl: data?.heroBannerUrl || null,
+        logoImageUrl: data?.logoImageUrl || null,
+      };
+    }
+  } catch (error) {
+    console.error("Error loading site settings:", error);
+    // Use default settings if error
+  }
 
   return (
     <div>
