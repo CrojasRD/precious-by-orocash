@@ -7,7 +7,22 @@ import type { Storage } from 'firebase-admin/storage';
 let adminApp: admin.app.App | undefined;
 
 function initializeFirebase(): admin.app.App {
-  if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
+  // Return existing app if already initialized
+  if (admin.apps.length > 0) {
+    return admin.app();
+  }
+
+  if (!process.env.FIREBASE_PROJECT_ID) {
+    throw new Error('FIREBASE_PROJECT_ID is not set in environment variables');
+  }
+  if (!process.env.FIREBASE_CLIENT_EMAIL) {
+    throw new Error('FIREBASE_CLIENT_EMAIL is not set in environment variables');
+  }
+  if (!process.env.FIREBASE_PRIVATE_KEY) {
+    throw new Error('FIREBASE_PRIVATE_KEY is not set in environment variables');
+  }
+
+  try {
     adminApp = admin.initializeApp({
       credential: cert({
         projectId: process.env.FIREBASE_PROJECT_ID,
@@ -16,8 +31,12 @@ function initializeFirebase(): admin.app.App {
       }),
       storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     });
+  } catch (error) {
+    console.error('Firebase Admin initialization error:', error);
+    throw new Error('Failed to initialize Firebase Admin SDK');
   }
-  return admin.app();
+
+  return adminApp as admin.app.App;
 }
 
 export const adminAuth = (): Auth => {

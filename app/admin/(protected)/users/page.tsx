@@ -12,16 +12,31 @@ export default async function UsersPage() {
 
   try {
     // Fetch all users from Firestore
-    const usersSnapshot = await db().collection("users").get();
-    data = usersSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      name: doc.data().name || "",
-      email: doc.data().email || "",
-      role: doc.data().role || "viewer",
-      created_at: doc.data().createdAt || "",
-    })) as AppUser[];
+    try {
+      const usersSnapshot = await db().collection("users").get();
+
+      if (usersSnapshot.empty) {
+        console.log("No users found in Firestore");
+        data = [];
+      } else {
+        data = usersSnapshot.docs.map((doc) => {
+          const userData = doc.data();
+          return {
+            id: doc.id,
+            name: userData.name || "",
+            email: userData.email || "",
+            role: userData.role || "viewer",
+            created_at: userData.createdAt || userData.created_at || "",
+          };
+        }) as AppUser[];
+      }
+    } catch (firestoreError) {
+      console.error("Firestore error fetching users:", firestoreError);
+      data = [];
+    }
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error in users page:", error);
+    data = [];
   }
 
   return (

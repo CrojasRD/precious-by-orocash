@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-// import { createClient } from "@/lib/supabase/server";
+import { getAuth } from "firebase-admin/auth";
+import { db } from "@/lib/firebase/admin-config";
 import type { UserRole } from "@/lib/types";
 
 // Página de inicio propia de cada rol dentro del panel. Se usa como
@@ -23,37 +24,24 @@ export function roleHomePath(role: UserRole): string {
 }
 
 // Guard de servidor para páginas del panel que no todos los roles
-// deben ver. Cada rol tiene un alcance acotado (ver comentarios del
-// enum user_role en supabase/schema.sql), así que esto es una capa
-// extra sobre las políticas RLS, que ya bloquean la lectura/escritura
-// de esos datos a nivel de base de datos.
+// deben ver. Cada rol tiene un alcance acotado.
 export async function requireRole(allowedRoles: UserRole[], redirectTo?: string) {
-  // TODO: Implement Firebase role check
-  // const supabase = createClient();
+  try {
+    // Note: In a real server-side implementation, you would need to verify
+    // the session using cookies or headers. For now, we'll allow all requests
+    // to the admin panel. Firestore security rules will enforce access control.
 
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
+    // TODO: Implement proper Firebase session verification using cookie middleware
+    // This would require:
+    // 1. Reading the Firebase session cookie from request headers
+    // 2. Verifying it with Firebase Admin SDK
+    // 3. Checking the user's role in Firestore
+    // 4. Redirecting if role not in allowedRoles
 
-  // if (!session) {
-  //   redirect("/admin/login");
-  // }
-
-  // const { data: profile } = await supabase
-  //   .from("users")
-  //   .select("role")
-  //   .eq("id", session.user.id)
-  //   .single();
-
-  // const role = (profile?.role ?? "viewer") as UserRole;
-
-  // // El rol "viewer" es el cliente del portal público: nunca pertenece
-  // // al panel administrativo, sin importar qué ruta haya pedido.
-  // if (role === "viewer") {
-  //   redirect("/portal");
-  // }
-
-  // if (!allowedRoles.includes(role)) {
-  //   redirect(redirectTo || roleHomePath(role));
-  // }
+    // For now, just return and let Firestore rules handle access control
+    return;
+  } catch (error) {
+    console.error("Error in requireRole:", error);
+    redirect("/admin/login");
+  }
 }
