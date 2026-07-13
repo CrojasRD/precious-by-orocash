@@ -4,6 +4,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/firebase/auth-context";
 
+// Declare dataLayer for GTM
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
 // La tipografía de marca ("Exmouth") se autoaloja vía @font-face en
 // globals.css, ya que no está disponible en Google Fonts. Ver
 // public/fonts/README.md para instrucciones de instalación.
