@@ -22,49 +22,57 @@ export default async function DashboardPage() {
 
   try {
     // Fetch all appointments
-    const appointmentsSnapshot = await db().collection("appointments").get();
-    const appointments = appointmentsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as any[];
+    try {
+      const appointmentsSnapshot = await db().collection("appointments").get();
+      const appointments = appointmentsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as any[];
 
-    metrics.total_appointments = appointments.length;
-    metrics.pending_count = appointments.filter(
-      (a) => a.appointmentStatus === "pendiente"
-    ).length;
-    metrics.confirmed_count = appointments.filter(
-      (a) => a.appointmentStatus === "confirmada"
-    ).length;
-    metrics.attended_count = appointments.filter(
-      (a) => a.appointmentStatus === "atendida"
-    ).length;
-    metrics.no_show_count = appointments.filter(
-      (a) => a.appointmentStatus === "no_asistio"
-    ).length;
-    metrics.cancelled_count = appointments.filter(
-      (a) => a.appointmentStatus === "cancelada"
-    ).length;
+      metrics.total_appointments = appointments.length;
+      metrics.pending_count = appointments.filter(
+        (a) => a.appointmentStatus === "pendiente"
+      ).length;
+      metrics.confirmed_count = appointments.filter(
+        (a) => a.appointmentStatus === "confirmada"
+      ).length;
+      metrics.attended_count = appointments.filter(
+        (a) => a.appointmentStatus === "atendida"
+      ).length;
+      metrics.no_show_count = appointments.filter(
+        (a) => a.appointmentStatus === "no_asistio"
+      ).length;
+      metrics.cancelled_count = appointments.filter(
+        (a) => a.appointmentStatus === "cancelada"
+      ).length;
+    } catch (appointmentError) {
+      console.error("Error fetching appointments:", appointmentError);
+    }
 
     // Fetch all transactions
-    const transactionsSnapshot = await db().collection("transactions").get();
-    const transactions = transactionsSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as any[];
+    try {
+      const transactionsSnapshot = await db().collection("transactions").get();
+      const transactions = transactionsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as any[];
 
-    metrics.transactions_count = transactions.filter(
-      (t) => t.transactionCompleted
-    ).length;
-    metrics.total_purchases = transactions
-      .filter((t) => t.transactionCompleted && t.transactionType === "compra")
-      .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
-    metrics.total_sales = transactions
-      .filter((t) => t.transactionCompleted && t.transactionType === "venta")
-      .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
-    metrics.total_value =
-      metrics.total_purchases + metrics.total_sales;
+      metrics.transactions_count = transactions.filter(
+        (t) => t.transactionCompleted
+      ).length;
+      metrics.total_purchases = transactions
+        .filter((t) => t.transactionCompleted && t.transactionType === "compra")
+        .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
+      metrics.total_sales = transactions
+        .filter((t) => t.transactionCompleted && t.transactionType === "venta")
+        .reduce((sum, t) => sum + (t.transactionValue || 0), 0);
+      metrics.total_value =
+        metrics.total_purchases + metrics.total_sales;
+    } catch (transactionError) {
+      console.error("Error fetching transactions:", transactionError);
+    }
   } catch (error) {
-    console.error("Error fetching metrics:", error);
+    console.error("Error in metrics page:", error);
   }
 
   return (
