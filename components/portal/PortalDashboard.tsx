@@ -56,7 +56,7 @@ export default function PortalDashboard({
 
       <div className="space-y-6">
         {appointments.map((a) => (
-          <AppointmentCard key={a.id} appointment={a} documents={documents.filter((d) => d.appointment_id === a.id)} />
+          <AppointmentCard key={a.id} appointment={a} documents={documents.filter((d) => d.appointmentId === a.id)} />
         ))}
       </div>
     </div>
@@ -84,7 +84,7 @@ function AppointmentCard({
       // const supabase = createClient();
       // const { data, error: signError } = await supabase.storage
       //   .from(CLIENT_FILES_BUCKET)
-      //   .createSignedUrl(appointment.valuation.report_url, 60);
+      //   .createSignedUrl(appointment.valuation.reportUrl, 60);
       // if (signError) throw new Error(signError.message);
       // window.open(data.signedUrl, "_blank");
       setError("Funcionalidad de descarga aún no implementada.");
@@ -173,7 +173,7 @@ function AppointmentCard({
           <ul className="mb-3 space-y-1.5">
             {documents.map((d) => (
               <li key={d.id} className="flex items-center gap-2 text-sm text-navy/70">
-                <FileText className="h-3.5 w-3.5 text-navy/40" /> {d.file_name}
+                <FileText className="h-3.5 w-3.5 text-navy/40" /> {d.fileName}
               </li>
             ))}
           </ul>

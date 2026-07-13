@@ -78,18 +78,18 @@ export default function AdvisorAppointmentDetailModal({
 
         onUpdated({
           ...appointment,
-          item_description: itemDescription || null,
-          advisor_notes: advisorNotes || null,
+          itemDescription: itemDescription || null,
+          advisorNotes: advisorNotes || null,
           valuation: finalReportUrl
             ? {
                 id: appointment.valuation?.id ?? "",
-                appointment_id: appointment.id,
-                report_url: finalReportUrl,
+                appointmentId: appointment.id,
+                reportUrl: finalReportUrl,
                 summary: summary || null,
-                estimated_value: estimatedValue ? Number(estimatedValue) : null,
-                created_by: appointment.valuation?.created_by ?? null,
-                created_at: appointment.valuation?.createdAt ?? new Date().toISOString(),
-                updated_at: new Date().toISOString(),
+                estimatedValue: estimatedValue ? Number(estimatedValue) : null,
+                createdBy: appointment.valuation?.createdBy ?? null,
+                createdAt: appointment.valuation?.createdAt ?? new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
               }
             : null,
         });

@@ -77,29 +77,29 @@ export interface AppointmentWithValuation extends Appointment {
 
 export interface ValuationReport {
   id: string;
-  appointment_id: string;
-  report_url: string;
+  appointmentId: string;
+  reportUrl: string;
   summary: string | null;
-  estimated_value: number | null;
-  created_by: string | null;
-  created_at: string;
-  updated_at: string;
+  estimatedValue: number | null;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ClientDocument {
   id: string;
-  appointment_id: string;
-  file_url: string;
-  file_name: string;
-  uploaded_by_email: string;
-  created_at: string;
+  appointmentId: string;
+  fileUrl: string;
+  fileName: string;
+  uploadedByEmail: string;
+  createdAt: string;
 }
 
 export interface SiteSettings {
-  brand_name: string;
-  brand_subtitle: string;
-  hero_banner_url: string | null;
-  logo_image_url: string | null;
+  brandName: string;
+  brandSubtitle: string;
+  heroBannerUrl: string | null;
+  logoImageUrl: string | null;
 }
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {

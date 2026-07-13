@@ -20,14 +20,14 @@ export default function BrandSettingsForm({
 }) {
   const router = useRouter();
 
-  const [brandName, setBrandName] = useState(initialSettings.brand_name);
-  const [brandSubtitle, setBrandSubtitle] = useState(initialSettings.brand_subtitle);
+  const [brandName, setBrandName] = useState(initialSettings.brandName);
+  const [brandSubtitle, setBrandSubtitle] = useState(initialSettings.brandSubtitle);
 
   const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [bannerPreview, setBannerPreview] = useState<string | null>(initialSettings.hero_banner_url);
+  const [bannerPreview, setBannerPreview] = useState<string | null>(initialSettings.heroBannerUrl);
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.logo_image_url);
+  const [logoPreview, setLogoPreview] = useState<string | null>(initialSettings.logoImageUrl);
   const [logoRemoved, setLogoRemoved] = useState(false);
 
   const [saving, setSaving] = useState(false);
@@ -104,8 +104,8 @@ export default function BrandSettingsForm({
     setSuccess(false);
 
     try {
-      let heroBannerUrl = initialSettings.hero_banner_url;
-      let logoImageUrl = initialSettings.logo_image_url;
+      let heroBannerUrl = initialSettings.heroBannerUrl;
+      let logoImageUrl = initialSettings.logoImageUrl;
 
       if (bannerFile) {
         heroBannerUrl = await uploadToBranding(bannerFile, "hero-banner");

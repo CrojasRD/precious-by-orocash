@@ -21,19 +21,19 @@ export default async function HomePage() {
   return (
     <>
       <Navbar
-        brandName={settings.brand_name}
-        brandSubtitle={settings.brand_subtitle}
-        logoImageUrl={settings.logo_image_url}
+        brandName={settings.brandName}
+        brandSubtitle={settings.brandSubtitle}
+        logoImageUrl={settings.logoImageUrl}
       />
       <main>
-        <Hero bannerUrl={settings.hero_banner_url} />
+        <Hero bannerUrl={settings.heroBannerUrl} />
         <About />
         <Services />
         <Experience />
         <Trust />
         <BookingSection />
       </main>
-      <Footer brandName={settings.brand_name} brandSubtitle={settings.brand_subtitle} />
+      <Footer brandName={settings.brandName} brandSubtitle={settings.brandSubtitle} />
     </>
   );
 }
