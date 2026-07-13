@@ -46,9 +46,9 @@ export async function POST(request: Request) {
       identification_number: body.identification_number,
       phone: body.phone,
       email: body.email,
-      appointment_reason: body.appointment_reason,
-      appointment_date: body.appointment_date,
-      appointment_time: body.appointment_time,
+      appointment_reason: body.appointmentReason,
+      appointment_date: body.appointmentDate,
+      appointment_time: body.appointmentTime,
       additional_comment: body.additional_comment,
       website: body.website,
     });
@@ -67,14 +67,14 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
 
     await appointmentRef.set({
-      fullName: appointmentData.full_name,
-      identificationNumber: appointmentData.identification_number,
+      fullName: appointmentData.fullName,
+      identificationNumber: appointmentData.identificationNumber,
       phone: appointmentData.phone,
       email: appointmentData.email,
-      appointmentReason: appointmentData.appointment_reason,
-      appointmentDate: appointmentData.appointment_date,
-      appointmentTime: appointmentData.appointment_time,
-      additionalComment: appointmentData.additional_comment || null,
+      appointmentReason: appointmentData.appointmentReason,
+      appointmentDate: appointmentData.appointmentDate,
+      appointmentTime: appointmentData.appointmentTime,
+      additionalComment: appointmentData.additionalComment || null,
       appointmentStatus: "pendiente",
       assignedAdvisorId: null,
       itemDescription: null,

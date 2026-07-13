@@ -40,10 +40,10 @@ export default function BookingForm() {
     formState: { errors, isSubmitting },
   } = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
-    defaultValues: { additional_comment: "", website: "" },
+    defaultValues: { additionalComment: "", website: "" },
   });
 
-  const selectedDate = watch("appointment_date");
+  const selectedDate = watch("appointmentDate");
 
   const onSubmit = async (values: AppointmentFormValues) => {
     setServerError(null);
@@ -107,21 +107,21 @@ export default function BookingForm() {
         {...register("website")}
       />
 
-      <Field label="Nombre completo" error={errors.full_name?.message} full>
+      <Field label="Nombre completo" error={errors.fullName?.message} full>
         <input
           type="text"
           placeholder="Ej. María Fernanda Torres"
           className="input-luxe"
-          {...register("full_name")}
+          {...register("fullName")}
         />
       </Field>
 
-      <Field label="Número de cédula" error={errors.identification_number?.message}>
+      <Field label="Número de cédula" error={errors.identificationNumber?.message}>
         <input
           type="text"
           placeholder="1712345678"
           className="input-luxe"
-          {...register("identification_number")}
+          {...register("identificationNumber")}
         />
       </Field>
 
@@ -143,10 +143,10 @@ export default function BookingForm() {
         />
       </Field>
 
-      <Field label="Motivo de la cita" error={errors.appointment_reason?.message}>
+      <Field label="Motivo de la cita" error={errors.appointmentReason?.message}>
         <select
           className="input-luxe"
-          {...register("appointment_reason", { required: "Selecciona el motivo de tu cita" })}
+          {...register("appointmentReason", { required: "Selecciona el motivo de tu cita" })}
         >
           <option value="">Selecciona una opción</option>
           {Object.entries(APPOINTMENT_REASON_LABELS).map(([value, label]) => (
@@ -157,10 +157,10 @@ export default function BookingForm() {
         </select>
       </Field>
 
-      <Field label="Hora de visita" error={errors.appointment_time?.message}>
+      <Field label="Hora de visita" error={errors.appointmentTime?.message}>
         <select
           className="input-luxe"
-          {...register("appointment_time", { required: "Selecciona una hora" })}
+          {...register("appointmentTime", { required: "Selecciona una hora" })}
         >
           <option value="">Selecciona una hora</option>
           {TIME_SLOTS.map((t) => (
@@ -171,10 +171,10 @@ export default function BookingForm() {
         </select>
       </Field>
 
-      <Field label="Fecha de visita" error={errors.appointment_date?.message} full>
+      <Field label="Fecha de visita" error={errors.appointmentDate?.message} full>
         <Controller
           control={control}
-          name="appointment_date"
+          name="appointmentDate"
           render={({ field }) => (
             <div className="relative" ref={calendarRef}>
               <button

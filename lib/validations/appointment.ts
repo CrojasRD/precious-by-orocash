@@ -4,12 +4,12 @@ import { z } from "zod";
 // Se ejecuta en cliente (react-hook-form) y de nuevo en servidor
 // (API route) antes de insertar en Supabase.
 export const appointmentSchema = z.object({
-  full_name: z
+  fullName: z
     .string()
     .trim()
     .min(3, "Ingresa tu nombre completo")
     .max(120, "Nombre demasiado largo"),
-  identification_number: z
+  identificationNumber: z
     .string()
     .trim()
     .min(5, "Ingresa un número de cédula válido")
@@ -22,11 +22,11 @@ export const appointmentSchema = z.object({
     .max(20, "Número de celular inválido")
     .regex(/^[0-9+\s-]+$/, "Formato de celular inválido"),
   email: z.string().trim().email("Ingresa un correo electrónico válido"),
-  appointment_reason: z.enum(
+  appointmentReason: z.enum(
     ["valuar", "inversion", "liquidar", "asesoria_patrimonial", "otro"],
     { errorMap: () => ({ message: "Selecciona el motivo de tu cita" }) }
   ),
-  appointment_date: z
+  appointmentDate: z
     .string()
     .min(1, "Selecciona una fecha")
     .refine((val) => {
@@ -35,8 +35,8 @@ export const appointmentSchema = z.object({
       today.setHours(0, 0, 0, 0);
       return selected >= today;
     }, "La fecha debe ser hoy o posterior"),
-  appointment_time: z.string().min(1, "Selecciona una hora"),
-  additional_comment: z.string().max(500, "Máximo 500 caracteres").optional(),
+  appointmentTime: z.string().min(1, "Selecciona una hora"),
+  additionalComment: z.string().max(500, "Máximo 500 caracteres").optional(),
   // Honeypot anti-spam: debe llegar vacío. Los bots suelen rellenarlo.
   website: z.string().max(0).optional(),
 });

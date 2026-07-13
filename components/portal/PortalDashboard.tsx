@@ -128,12 +128,12 @@ function AppointmentCard({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-xs uppercase tracking-widest2 text-navy/40">
-            {appointment.appointment_date} · {appointment.appointment_time}
+            {appointment.appointmentdate} · {appointment.appointmenttime}
           </p>
-          <p className="mt-1 text-navy">{APPOINTMENT_REASON_LABELS[appointment.appointment_reason]}</p>
+          <p className="mt-1 text-navy">{APPOINTMENT_REASON_LABELS[appointment.appointmentreason]}</p>
         </div>
-        <span className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[appointment.appointment_status]}`}>
-          {APPOINTMENT_STATUS_LABELS[appointment.appointment_status]}
+        <span className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[appointment.appointmentstatus]}`}>
+          {APPOINTMENT_STATUS_LABELS[appointment.appointmentstatus]}
         </span>
       </div>
 
