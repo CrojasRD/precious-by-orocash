@@ -9,13 +9,12 @@ service firebase.storage {
     
     function isAdmin() {
       return isAuth() && request.auth.token.email != null;
-      // En producción, verificar role en Firestore:
-      // return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    
+
     function isStaff() {
+      // Allow any authenticated user to act as staff
+      // In production, verify role in Firestore if needed
       return isAuth();
-      // En producción, verificar si el role está en staff list
     }
 
     // ============= BRANDING (Público) =============

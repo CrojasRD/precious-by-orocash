@@ -82,19 +82,32 @@ export default function BrandSettingsForm({
   }
 
   async function uploadToBranding(file: File, prefix: string) {
-    const app = initializeApp(FIREBASE_CONFIG);
-    const storage = getStorage(app);
-    const ext = file.name.split(".").pop() || "png";
-    const path = `${BRANDING_BUCKET}/${prefix}-${Date.now()}.${ext}`;
-
     try {
+      const app = initializeApp(FIREBASE_CONFIG);
+      const storage = getStorage(app);
+      const ext = file.name.split(".").pop() || "png";
+      const path = `${BRANDING_BUCKET}/${prefix}-${Date.now()}.${ext}`;
+
+      console.log(`Uploading ${prefix} to: ${path}`);
+
       const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
+
+      // Upload file
+      const uploadResult = await uploadBytes(storageRef, file);
+      console.log(`Upload successful:`, uploadResult);
+
       // Get the public download URL
       const downloadUrl = await getDownloadURL(storageRef);
+      console.log(`Download URL: ${downloadUrl}`);
+
       return downloadUrl;
     } catch (err: any) {
-      throw new Error(err.message || "Error uploading file to Firebase Storage");
+      console.error(`Upload error for ${prefix}:`, err);
+      throw new Error(
+        err.code === "storage/unauthorized"
+          ? "Permiso denegado. Verifica las reglas de Firebase Storage."
+          : err.message || "Error subiendo archivo a Firebase Storage"
+      );
     }
   }
 
