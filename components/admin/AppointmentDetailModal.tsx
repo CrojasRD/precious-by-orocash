@@ -52,7 +52,7 @@ export default function AppointmentDetailModal({
 
         onUpdated({
           ...appointment,
-          appointment_status: status,
+          appointmentStatus: status,
           transaction: {
             id: appointment.transaction?.id ?? "",
             appointmentId: appointment.id,
