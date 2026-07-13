@@ -1,60 +1,80 @@
-import { requireRole } from "@/lib/auth/require-role";
-import UsersTable from "@/components/admin/UsersTable";
 import { db } from "@/lib/firebase/admin-config";
 import type { AppUser } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
-  await requireRole(["admin"]);
-
   let data: AppUser[] = [];
 
   try {
-    // Fetch all users from Firestore
-    try {
-      const usersSnapshot = await db().collection("users").get();
+    const usersSnapshot = await db().collection("users").get();
 
-      if (usersSnapshot.empty) {
-        console.log("No users found in Firestore");
-        data = [];
-      } else {
-        data = usersSnapshot.docs.map((doc) => {
-          const userData = doc.data();
-          return {
-            id: doc.id,
-            name: userData.name || "",
-            email: userData.email || "",
-            role: userData.role || "viewer",
-            created_at: userData.createdAt || userData.created_at || "",
-          };
-        }) as AppUser[];
-      }
-    } catch (firestoreError) {
-      console.error("Firestore error fetching users:", firestoreError);
-      data = [];
+    if (!usersSnapshot.empty) {
+      data = usersSnapshot.docs.map((doc) => {
+        const userData = doc.data();
+        return {
+          id: doc.id,
+          name: userData.name || "",
+          email: userData.email || "",
+          role: userData.role || "viewer",
+          created_at: userData.createdAt || userData.created_at || new Date().toISOString(),
+        } as AppUser;
+      });
     }
   } catch (error) {
-    console.error("Error in users page:", error);
-    data = [];
+    console.error("Error fetching users:", error);
   }
 
   return (
     <div>
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="eyebrow">Usuarios activos</p>
-          <h1 className="mt-2 font-serif text-3xl text-navy">
-            Gestión de usuarios y permisos
-          </h1>
-          <p className="mt-2 max-w-xl text-sm text-navy/60">
-            Crea accesos para el equipo, asigna su rol y revoca el acceso
-            cuando sea necesario. Cada acción queda registrada.
-          </p>
-        </div>
+      <div className="mb-8">
+        <p className="eyebrow">Usuarios activos</p>
+        <h1 className="mt-2 font-serif text-3xl text-navy">
+          Gestión de usuarios
+        </h1>
+        <p className="mt-2 max-w-xl text-sm text-navy/60">
+          Total de usuarios en el sistema.
+        </p>
       </div>
 
-      <UsersTable initialUsers={(data ?? []) as AppUser[]} />
+      <div className="overflow-x-auto rounded-sm border border-navy/10 bg-cream shadow-soft">
+        <table className="w-full min-w-[720px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-navy/10 text-xs uppercase tracking-widest2 text-navy/50">
+              <th className="px-4 py-4">Nombre</th>
+              <th className="px-4 py-4">Correo</th>
+              <th className="px-4 py-4">Rol</th>
+              <th className="px-4 py-4">Fecha de creación</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.length > 0 ? (
+              data.map((user) => (
+                <tr key={user.id} className="border-b border-navy/5 hover:bg-ivory">
+                  <td className="px-4 py-4 font-medium text-navy">{user.name}</td>
+                  <td className="px-4 py-4 text-navy/70">{user.email}</td>
+                  <td className="px-4 py-4">
+                    <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold-dark">
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 text-navy/60">
+                    {user.created_at
+                      ? new Date(user.created_at).toLocaleDateString("es-EC")
+                      : "—"}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4} className="px-4 py-10 text-center text-navy/40">
+                  No hay usuarios registrados.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
