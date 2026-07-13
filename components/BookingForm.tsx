@@ -215,7 +215,7 @@ export default function BookingForm() {
         />
       </Field>
 
-      <Field label="Comentario adicional (opcional)" error={errors.additional_comment?.message} full>
+      <Field label="Comentario adicional (opcional)" error={errors.additionalComment?.message} full>
         <textarea
           rows={4}
           placeholder="Cuéntanos brevemente sobre tu(s) pieza(s) o consulta"
