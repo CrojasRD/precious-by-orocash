@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-// import { createClient } from "@/lib/supabase/server";
+import { db } from "@/lib/firebase/admin-config";
 import type { AppointmentStatus, TransactionType } from "@/lib/types";
 
 // Todas las mutaciones usan el cliente de servidor con la sesión del
@@ -12,23 +12,21 @@ export async function updateAppointmentStatus(
   appointmentId: string,
   status: AppointmentStatus
 ) {
-  // TODO: Implement Firestore appointment status update
-  // const supabase = createClient();
+  try {
+    await db()
+      .collection("appointments")
+      .doc(appointmentId)
+      .update({
+        appointmentStatus: status,
+        updatedAt: new Date().toISOString(),
+      });
 
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
-  // if (!session) throw new Error("No autorizado.");
-
-  // const { error } = await supabase
-  //   .from("appointments")
-  //   .update({ appointment_status: status })
-  //   .eq("id", appointmentId);
-
-  // if (error) throw new Error(error.message);
-
-  revalidatePath("/admin/appointments");
-  revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/appointments");
+    revalidatePath("/admin/dashboard");
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    throw new Error("No se pudo actualizar el estado de la cita.");
+  }
 }
 
 export async function upsertTransaction(input: {
@@ -38,14 +36,6 @@ export async function upsertTransaction(input: {
   transactionValue: number | null;
   internalNotes: string | null;
 }) {
-  // TODO: Implement Firestore transaction upsert
-  // const supabase = createClient();
-
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
-  // if (!session) throw new Error("No autorizado.");
-
   if (input.transactionCompleted && !input.transactionType) {
     throw new Error("Selecciona el tipo de transacción.");
   }
@@ -53,21 +43,29 @@ export async function upsertTransaction(input: {
     throw new Error("Ingresa un valor de transacción válido.");
   }
 
-  // const { error } = await supabase.from("transactions").upsert(
-  //   {
-  //     appointment_id: input.appointmentId,
-  //     transaction_completed: input.transactionCompleted,
-  //     transaction_type: input.transactionCompleted ? input.transactionType : null,
-  //     transaction_value: input.transactionCompleted ? input.transactionValue : null,
-  //     internal_notes: input.internalNotes,
-  //   },
-  //   { onConflict: "appointment_id" }
-  // );
+  try {
+    const now = new Date().toISOString();
+    await db()
+      .collection("transactions")
+      .doc(input.appointmentId)
+      .set(
+        {
+          appointmentId: input.appointmentId,
+          transactionCompleted: input.transactionCompleted,
+          transactionType: input.transactionCompleted ? input.transactionType : null,
+          transactionValue: input.transactionCompleted ? input.transactionValue : null,
+          internalNotes: input.internalNotes,
+          updatedAt: now,
+        },
+        { merge: true }
+      );
 
-  // if (error) throw new Error(error.message);
-
-  revalidatePath("/admin/appointments");
-  revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/appointments");
+    revalidatePath("/admin/dashboard");
+  } catch (error) {
+    console.error("Error upserting transaction:", error);
+    throw new Error("No se pudo guardar la transacción.");
+  }
 }
 
 // Guarda el logotipo (texto y/o imagen) y el banner del hero.
@@ -79,28 +77,28 @@ export async function updateSiteSettings(input: {
   heroBannerUrl: string | null;
   logoImageUrl: string | null;
 }) {
-  // TODO: Implement Firestore site settings update
-  // const supabase = createClient();
-
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
-  // if (!session) throw new Error("No autorizado.");
-
   if (!input.brandName.trim()) {
     throw new Error("El nombre del logotipo no puede estar vacío.");
   }
 
-  // const { error } = await supabase
-  //   .from("site_settings")
-  //   .update({
-  //     brand_name: input.brandName.trim(),
-  //     brand_subtitle: input.brandSubtitle.trim(),
-  //     hero_banner_url: input.heroBannerUrl,
-  //     logo_image_url: input.logoImageUrl,
-  //   });
+  try {
+    await db()
+      .collection("site_settings")
+      .doc("config")
+      .set(
+        {
+          brandName: input.brandName.trim(),
+          brandSubtitle: input.brandSubtitle.trim(),
+          heroBannerUrl: input.heroBannerUrl,
+          logoImageUrl: input.logoImageUrl,
+          updatedAt: new Date().toISOString(),
+        },
+        { merge: true }
+      );
 
-  // if (error) throw new Error(error.message);
-
-  revalidatePath("/admin/settings");
+    revalidatePath("/admin/settings");
+  } catch (error) {
+    console.error("Error updating site settings:", error);
+    throw new Error("No se pudo guardar la configuración del sitio.");
+  }
 }
