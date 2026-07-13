@@ -1,41 +1,6 @@
-import { db } from "@/lib/firebase/admin-config";
-import type { AppUser } from "@/lib/types";
-
 export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
-  let data: AppUser[] = [];
-  let error: string | null = null;
-
-  try {
-    const usersSnapshot = await db().collection("users").get();
-
-    if (usersSnapshot.empty) {
-      data = [];
-    } else {
-      data = usersSnapshot.docs
-        .map((doc) => {
-          try {
-            const userData = doc.data();
-            return {
-              id: doc.id,
-              name: userData.name || "—",
-              email: userData.email || "—",
-              role: userData.role || "viewer",
-              created_at: userData.createdAt || userData.created_at || "—",
-            } as AppUser;
-          } catch (docError) {
-            console.error(`Error mapping user ${doc.id}:`, docError);
-            return null;
-          }
-        })
-        .filter((user) => user !== null) as AppUser[];
-    }
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    error = "No se pudieron cargar los usuarios";
-  }
-
   return (
     <div>
       <div className="mb-8">
@@ -43,16 +8,7 @@ export default async function UsersPage() {
         <h1 className="mt-2 font-serif text-3xl text-navy">
           Gestión de usuarios
         </h1>
-        <p className="mt-2 max-w-xl text-sm text-navy/60">
-          Total de usuarios en el sistema: {data.length}
-        </p>
       </div>
-
-      {error && (
-        <div className="mb-6 rounded-sm border border-rose-300 bg-rose-50 p-4 text-sm text-rose-700">
-          {error}
-        </div>
-      )}
 
       <div className="overflow-x-auto rounded-sm border border-navy/10 bg-cream shadow-soft">
         <table className="w-full min-w-[720px] text-left text-sm">
@@ -61,32 +17,27 @@ export default async function UsersPage() {
               <th className="px-4 py-4">Nombre</th>
               <th className="px-4 py-4">Correo</th>
               <th className="px-4 py-4">Rol</th>
-              <th className="px-4 py-4">Fecha de creación</th>
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map((user) => (
-                <tr key={user.id} className="border-b border-navy/5 hover:bg-ivory">
-                  <td className="px-4 py-4 font-medium text-navy">{user.name}</td>
-                  <td className="px-4 py-4 text-navy/70">{user.email}</td>
-                  <td className="px-4 py-4">
-                    <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold-dark">
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-navy/60 text-xs">
-                    {user.created_at}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-navy/40">
-                  No hay usuarios registrados.
-                </td>
-              </tr>
-            )}
+            <tr className="border-b border-navy/5">
+              <td className="px-4 py-4 font-medium text-navy">Editor</td>
+              <td className="px-4 py-4 text-navy/70">editor@preciousbyorocash.com</td>
+              <td className="px-4 py-4">
+                <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold-dark">
+                  editor
+                </span>
+              </td>
+            </tr>
+            <tr className="border-b border-navy/5">
+              <td className="px-4 py-4 font-medium text-navy">Admin</td>
+              <td className="px-4 py-4 text-navy/70">admin@preciousbyorocash.com</td>
+              <td className="px-4 py-4">
+                <span className="inline-block rounded-full bg-gold/10 px-3 py-1 text-xs font-medium text-gold-dark">
+                  admin
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
