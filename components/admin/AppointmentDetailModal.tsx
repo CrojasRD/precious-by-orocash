@@ -20,17 +20,17 @@ export default function AppointmentDetailModal({
   onClose: () => void;
   onUpdated: (updated: AppointmentWithTransaction) => void;
 }) {
-  const [status, setStatus] = useState<AppointmentStatus>(appointment.appointment_status);
+  const [status, setStatus] = useState<AppointmentStatus>(appointment.appointmentStatus);
   const [completed, setCompleted] = useState<boolean>(
-    appointment.transaction?.transaction_completed ?? false
+    appointment.transaction?.transactionCompleted ?? false
   );
   const [type, setType] = useState<TransactionType | "">(
-    appointment.transaction?.transaction_type ?? ""
+    appointment.transaction?.transactionType ?? ""
   );
   const [value, setValue] = useState<string>(
-    appointment.transaction?.transaction_value?.toString() ?? ""
+    appointment.transaction?.transactionValue?.toString() ?? ""
   );
-  const [notes, setNotes] = useState<string>(appointment.transaction?.internal_notes ?? "");
+  const [notes, setNotes] = useState<string>(appointment.transaction?.internalNotes ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -38,7 +38,7 @@ export default function AppointmentDetailModal({
     setError(null);
     startTransition(async () => {
       try {
-        if (status !== appointment.appointment_status) {
+        if (status !== appointment.appointmentStatus) {
           await updateAppointmentStatus(appointment.id, status);
         }
 
@@ -55,13 +55,13 @@ export default function AppointmentDetailModal({
           appointment_status: status,
           transaction: {
             id: appointment.transaction?.id ?? "",
-            appointment_id: appointment.id,
-            transaction_completed: completed,
-            transaction_type: completed ? (type as TransactionType) || null : null,
-            transaction_value: completed && value ? Number(value) : null,
-            internal_notes: notes || null,
-            created_at: appointment.transaction?.created_at ?? new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            appointmentId: appointment.id,
+            transactionCompleted: completed,
+            transactionType: completed ? (type as TransactionType) || null : null,
+            transactionValue: completed && value ? Number(value) : null,
+            internalNotes: notes || null,
+            createdAt: appointment.transaction?.createdAt ?? new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
           },
         });
       } catch (err) {
@@ -76,7 +76,7 @@ export default function AppointmentDetailModal({
         <div className="flex items-center justify-between border-b border-navy/10 px-8 py-6">
           <div>
             <p className="eyebrow">Detalle de cita</p>
-            <h2 className="mt-1 font-serif text-2xl text-navy">{appointment.full_name}</h2>
+            <h2 className="mt-1 font-serif text-2xl text-navy">{appointment.fullName}</h2>
           </div>
           <button onClick={onClose} className="text-navy/50 hover:text-navy">
             <X className="h-5 w-5" />
@@ -86,18 +86,18 @@ export default function AppointmentDetailModal({
         <div className="space-y-8 px-8 py-6">
           {/* Datos del cliente */}
           <section className="grid grid-cols-2 gap-4 text-sm">
-            <Info label="Cédula" value={appointment.identification_number} />
+            <Info label="Cédula" value={appointment.identificationNumber} />
             <Info label="Celular" value={appointment.phone} />
             <Info label="Correo" value={appointment.email} />
             <Info
               label="Motivo"
-              value={APPOINTMENT_REASON_LABELS[appointment.appointment_reason]}
+              value={APPOINTMENT_REASON_LABELS[appointment.appointmentReason]}
             />
-            <Info label="Fecha" value={appointment.appointment_date} />
-            <Info label="Hora" value={appointment.appointment_time} />
-            {appointment.additional_comment && (
+            <Info label="Fecha" value={appointment.appointmentDate} />
+            <Info label="Hora" value={appointment.appointmentTime} />
+            {appointment.additionalComment && (
               <div className="col-span-2">
-                <Info label="Comentario del cliente" value={appointment.additional_comment} />
+                <Info label="Comentario del cliente" value={appointment.additionalComment} />
               </div>
             )}
           </section>

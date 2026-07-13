@@ -26,16 +26,16 @@ export default function AdvisorAppointmentDetailModal({
   onClose: () => void;
   onUpdated: (updated: AppointmentWithValuation) => void;
 }) {
-  const [itemDescription, setItemDescription] = useState(appointment.item_description ?? "");
-  const [advisorNotes, setAdvisorNotes] = useState(appointment.advisor_notes ?? "");
+  const [itemDescription, setItemDescription] = useState(appointment.itemDescription ?? "");
+  const [advisorNotes, setAdvisorNotes] = useState(appointment.advisorNotes ?? "");
 
   const [summary, setSummary] = useState(appointment.valuation?.summary ?? "");
   const [estimatedValue, setEstimatedValue] = useState(
-    appointment.valuation?.estimated_value?.toString() ?? ""
+    appointment.valuation?.estimatedValue?.toString() ?? ""
   );
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [reportUrl, setReportUrl] = useState<string | null>(
-    appointment.valuation?.report_url ?? null
+    appointment.valuation?.reportUrl ?? null
   );
 
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +88,7 @@ export default function AdvisorAppointmentDetailModal({
                 summary: summary || null,
                 estimated_value: estimatedValue ? Number(estimatedValue) : null,
                 created_by: appointment.valuation?.created_by ?? null,
-                created_at: appointment.valuation?.created_at ?? new Date().toISOString(),
+                created_at: appointment.valuation?.createdAt ?? new Date().toISOString(),
                 updated_at: new Date().toISOString(),
               }
             : null,
@@ -105,7 +105,7 @@ export default function AdvisorAppointmentDetailModal({
         <div className="flex items-center justify-between border-b border-navy/10 px-8 py-6">
           <div>
             <p className="eyebrow">Ficha del cliente</p>
-            <h2 className="mt-1 font-serif text-2xl text-navy">{appointment.full_name}</h2>
+            <h2 className="mt-1 font-serif text-2xl text-navy">{appointment.fullName}</h2>
           </div>
           <button onClick={onClose} className="text-navy/50 hover:text-navy">
             <X className="h-5 w-5" />
@@ -116,10 +116,10 @@ export default function AdvisorAppointmentDetailModal({
           <section className="grid grid-cols-2 gap-4 text-sm">
             <Info label="Celular" value={appointment.phone} />
             <Info label="Correo" value={appointment.email} />
-            <Info label="Motivo" value={APPOINTMENT_REASON_LABELS[appointment.appointment_reason]} />
-            <Info label="Estado" value={APPOINTMENT_STATUS_LABELS[appointment.appointment_status]} />
-            <Info label="Fecha" value={appointment.appointment_date} />
-            <Info label="Hora" value={appointment.appointment_time} />
+            <Info label="Motivo" value={APPOINTMENT_REASON_LABELS[appointment.appointmentReason]} />
+            <Info label="Estado" value={APPOINTMENT_STATUS_LABELS[appointment.appointmentStatus]} />
+            <Info label="Fecha" value={appointment.appointmentDate} />
+            <Info label="Hora" value={appointment.appointmentTime} />
           </section>
 
           <section>

@@ -23,7 +23,7 @@ export default function AdvisorAppointmentsTable({
     if (!search) return appointments;
     const q = search.toLowerCase();
     return appointments.filter((a) =>
-      `${a.full_name} ${a.identification_number} ${a.email}`.toLowerCase().includes(q)
+      `${a.fullName} ${a.identificationNumber} ${a.email}`.toLowerCase().includes(q)
     );
   }, [appointments, search]);
 
@@ -68,17 +68,17 @@ export default function AdvisorAppointmentsTable({
                 onClick={() => setSelected(a)}
                 className="cursor-pointer border-b border-navy/5 transition-colors hover:bg-ivory"
               >
-                <td className="px-4 py-4 text-navy/80">{a.appointment_date}</td>
-                <td className="px-4 py-4 text-navy/80">{a.appointment_time}</td>
-                <td className="px-4 py-4 font-medium text-navy">{a.full_name}</td>
+                <td className="px-4 py-4 text-navy/80">{a.appointmentDate}</td>
+                <td className="px-4 py-4 text-navy/80">{a.appointmentTime}</td>
+                <td className="px-4 py-4 font-medium text-navy">{a.fullName}</td>
                 <td className="px-4 py-4 text-navy/70">
-                  {APPOINTMENT_REASON_LABELS[a.appointment_reason]}
+                  {APPOINTMENT_REASON_LABELS[a.appointmentReason]}
                 </td>
                 <td className="px-4 py-4">
                   <span
-                    className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[a.appointment_status]}`}
+                    className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[a.appointmentStatus]}`}
                   >
-                    {APPOINTMENT_STATUS_LABELS[a.appointment_status]}
+                    {APPOINTMENT_STATUS_LABELS[a.appointmentStatus]}
                   </span>
                 </td>
                 <td className="px-4 py-4 text-navy/70">

@@ -45,7 +45,7 @@ export default function AppointmentsTable({
       if (filters.reason !== "todos" && a.appointmentReason !== filters.reason) return false;
       if (
         filters.transactionType !== "todas" &&
-        a.transaction?.transaction_type !== filters.transactionType
+        a.transaction?.transactionType !== filters.transactionType
       )
         return false;
       if (filters.dateFrom && a.appointmentDate < filters.dateFrom) return false;
@@ -175,15 +175,15 @@ export default function AppointmentsTable({
                   </span>
                 </td>
                 <td className="px-4 py-4 text-navy/70">
-                  {a.transaction?.transaction_completed
-                    ? a.transaction.transaction_type === "compra"
+                  {a.transaction?.transactionCompleted
+                    ? a.transaction.transactionType === "compra"
                       ? "Compra"
                       : "Venta"
                     : "—"}
                 </td>
                 <td className="px-4 py-4 text-navy/70">
-                  {a.transaction?.transaction_value
-                    ? `$${a.transaction.transaction_value.toLocaleString("es-EC")}`
+                  {a.transaction?.transactionValue
+                    ? `$${a.transaction.transactionValue.toLocaleString("es-EC")}`
                     : "—"}
                 </td>
               </tr>
