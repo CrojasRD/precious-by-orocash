@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DayPicker } from "react-day-picker";
@@ -14,6 +14,7 @@ import {
   type AppointmentFormValues,
 } from "@/lib/validations/appointment";
 import { APPOINTMENT_REASON_LABELS } from "@/lib/types";
+import { trackAppointmentView, trackAppointmentSubmit, trackError } from "@/lib/gtm/events";
 
 const TIME_SLOTS = [
   { value: "09:00", label: "9:00 - 10:00 AM" },
@@ -44,6 +45,12 @@ export default function BookingForm() {
   });
 
   const selectedDate = watch("appointmentDate");
+  const selectedReason = watch("appointmentReason");
+
+  // Track when appointment form is viewed
+  useEffect(() => {
+    trackAppointmentView();
+  }, []);
 
   const onSubmit = async (values: AppointmentFormValues) => {
     setServerError(null);
@@ -59,14 +66,28 @@ export default function BookingForm() {
         throw new Error(body?.message ?? "No se pudo registrar la cita.");
       }
 
+      // Track successful appointment submission
+      trackAppointmentSubmit({
+        appointmentReason: values.appointmentReason,
+        appointmentDate: values.appointmentDate,
+      });
+
       setSubmitted(true);
       reset();
     } catch (err) {
-      setServerError(
+      const errorMessage =
         err instanceof Error
           ? err.message
-          : "Ocurrió un error inesperado. Intenta nuevamente."
+          : "Ocurrió un error inesperado. Intenta nuevamente.";
+
+      // Track error
+      trackError(
+        "AppointmentSubmitError",
+        errorMessage,
+        "/booking"
       );
+
+      setServerError(errorMessage);
     }
   };
 
