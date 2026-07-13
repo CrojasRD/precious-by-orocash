@@ -18,7 +18,7 @@ export default async function UsersPage() {
       name: doc.data().name || "",
       email: doc.data().email || "",
       role: doc.data().role || "viewer",
-      createdAt: doc.data().createdAt || "",
+      created_at: doc.data().createdAt || "",
     })) as AppUser[];
   } catch (error) {
     console.error("Error fetching users:", error);
