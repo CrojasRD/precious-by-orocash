@@ -1,5 +1,5 @@
 import { requireRole } from "@/lib/auth/require-role";
-import MetricsCards from "@/components/admin/MetricsCards";
+import DashboardMetrics from "@/components/admin/DashboardMetrics";
 import { db } from "@/lib/firebase/admin-config";
 
 export const dynamic = "force-dynamic";
@@ -84,7 +84,7 @@ export default async function DashboardPage() {
         </h1>
       </div>
 
-      <MetricsCards metrics={metrics} />
+      <DashboardMetrics metrics={metrics} />
     </div>
   );
 }

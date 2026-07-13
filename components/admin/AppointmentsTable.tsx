@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import {
   APPOINTMENT_REASON_LABELS,
@@ -11,6 +11,7 @@ import {
   type AppointmentWithTransaction,
 } from "@/lib/types";
 import AppointmentDetailModal from "@/components/admin/AppointmentDetailModal";
+import { trackAppointmentsListView } from "@/lib/gtm/events";
 
 type Filters = {
   search: string;
@@ -38,6 +39,11 @@ export default function AppointmentsTable({
   const [appointments, setAppointments] = useState(initialAppointments);
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [selected, setSelected] = useState<AppointmentWithTransaction | null>(null);
+
+  // Track when appointments list is viewed
+  useEffect(() => {
+    trackAppointmentsListView(appointments.length);
+  }, [appointments.length]);
 
   const filtered = useMemo(() => {
     return appointments.filter((a) => {

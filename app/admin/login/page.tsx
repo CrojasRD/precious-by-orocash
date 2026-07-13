@@ -6,6 +6,7 @@ import { Lock, Loader2, ShieldCheck } from "lucide-react";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { sendPasswordReset } from "@/lib/actions/users";
+import { trackAdminLogin, trackError } from "@/lib/gtm/events";
 
 function AdminLoginContent() {
   const router = useRouter();
@@ -115,6 +116,9 @@ function AdminLoginContent() {
         body: JSON.stringify({ uid: result.user.uid }),
       });
 
+      // Track admin login
+      trackAdminLogin(result.user.email || email, roleData.role);
+
       // Limpiar los campos antes de redirigir
       setEmail("");
       setPassword("");
@@ -125,6 +129,9 @@ function AdminLoginContent() {
     } catch (err: any) {
       setLoading(false);
       const errorMessage = err.message || "Correo o contraseña incorrectos";
+
+      // Track error
+      trackError("AdminLoginError", errorMessage, "/admin/login");
 
       // Mapear errores de Firebase a mensajes en español
       if (err.code === "auth/user-not-found") {

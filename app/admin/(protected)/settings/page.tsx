@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase/admin-config";
-import BrandSettingsForm from "@/components/admin/BrandSettingsForm";
+import SettingsWithTracking from "@/components/admin/SettingsWithTracking";
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <BrandSettingsForm initialSettings={settings} />
+      <SettingsWithTracking settings={settings} />
     </div>
   );
 }

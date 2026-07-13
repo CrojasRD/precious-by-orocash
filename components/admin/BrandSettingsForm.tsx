@@ -7,6 +7,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import { updateSiteSettings } from "@/lib/actions/admin";
+import { trackLogoUpload, trackBannerUpload, trackSettingsSave } from "@/lib/gtm/events";
 import type { SiteSettings } from "@/lib/types";
 
 const BRANDING_BUCKET = "branding";
@@ -112,6 +113,13 @@ export default function BrandSettingsForm({
       const downloadUrl = await getDownloadURL(storageRef);
       console.log(`[${prefix}] Download URL obtained:`, downloadUrl);
 
+      // Track upload event
+      if (prefix === "logo") {
+        trackLogoUpload(file.size, file.type);
+      } else if (prefix === "hero-banner") {
+        trackBannerUpload(file.size, file.type);
+      }
+
       return downloadUrl;
     } catch (err: any) {
       console.error(`[${prefix}] Upload error:`, {
@@ -158,6 +166,9 @@ export default function BrandSettingsForm({
         heroBannerUrl,
         logoImageUrl,
       });
+
+      // Track settings save
+      trackSettingsSave();
 
       setSuccess(true);
       setBannerFile(null);
