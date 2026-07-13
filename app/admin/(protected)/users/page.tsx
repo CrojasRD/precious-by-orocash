@@ -59,8 +59,17 @@ export default async function UsersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-4 text-navy/60">
-                    {user.created_at
-                      ? new Date(user.created_at).toLocaleDateString("es-EC")
+                    {user.created_at && user.created_at !== "Invalid Date"
+                      ? (() => {
+                          try {
+                            const date = new Date(user.created_at);
+                            return isNaN(date.getTime())
+                              ? "—"
+                              : date.toLocaleDateString("es-EC");
+                          } catch {
+                            return "—";
+                          }
+                        })()
                       : "—"}
                   </td>
                 </tr>
