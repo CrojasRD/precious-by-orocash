@@ -40,31 +40,31 @@ export type TransactionType = "compra" | "venta";
 
 export interface Appointment {
   id: string;
-  full_name: string;
-  identification_number: string;
+  fullName: string;
+  identificationNumber: string;
   phone: string;
   email: string;
-  appointment_reason: AppointmentReason;
-  appointment_date: string; // YYYY-MM-DD
-  appointment_time: string; // HH:mm
-  additional_comment: string | null;
-  appointment_status: AppointmentStatus;
-  assigned_advisor_id: string | null;
-  item_description: string | null;
-  advisor_notes: string | null;
-  created_at: string;
-  updated_at: string;
+  appointmentReason: AppointmentReason;
+  appointmentDate: string; // YYYY-MM-DD
+  appointmentTime: string; // HH:mm
+  additionalComment: string | null;
+  appointmentStatus: AppointmentStatus;
+  assignedAdvisorId: string | null;
+  itemDescription: string | null;
+  advisorNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Transaction {
   id: string;
-  appointment_id: string;
-  transaction_completed: boolean;
-  transaction_type: TransactionType | null;
-  transaction_value: number | null;
-  internal_notes: string | null;
-  created_at: string;
-  updated_at: string;
+  appointmentId: string;
+  transactionCompleted: boolean;
+  transactionType: TransactionType | null;
+  transactionValue: number | null;
+  internalNotes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AppointmentWithTransaction extends Appointment {

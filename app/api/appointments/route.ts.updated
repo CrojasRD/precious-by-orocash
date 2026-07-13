@@ -1,0 +1,80 @@
+import { NextResponse } from "next/server";
+import { appointmentSchema } from "@/lib/validations/appointment";
+import { db } from "@/lib/firebase/admin-config";
+
+// Rate limiting simple en memoria (por IP). En producción usar
+// Upstash Redis / Vercel KV para que funcione entre instancias serverless.
+const requestLog = new Map<string, number[]>();
+const WINDOW_MS = 60_000;
+const MAX_REQUESTS = 5;
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const timestamps = (requestLog.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  timestamps.push(now);
+  requestLog.set(ip, timestamps);
+  return timestamps.length > MAX_REQUESTS;
+}
+
+export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { message: "Demasiadas solicitudes. Intenta nuevamente en unos minutos." },
+      { status: 429 }
+    );
+  }
+
+  const body = await request.json().catch(() => null);
+  if (!body) {
+    return NextResponse.json({ message: "Solicitud inválida." }, { status: 400 });
+  }
+
+  // Honeypot: si el campo "website" viene lleno, es muy probable que sea un bot.
+  if (body.website) {
+    return NextResponse.json({ message: "Solicitud rechazada." }, { status: 400 });
+  }
+
+  const parsed = appointmentSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { message: "Datos inválidos.", errors: parsed.error.flatten() },
+      { status: 422 }
+    );
+  }
+
+  const { website, ...appointmentData } = parsed.data;
+
+  // TODO: validar reCAPTCHA aquí antes de insertar (ver README, sección Seguridad).
+
+  try {
+    const appointmentRef = db().collection("appointments").doc();
+    const now = new Date().toISOString();
+
+    await appointmentRef.set({
+      full_name: appointmentData.full_name,
+      identification_number: appointmentData.identification_number,
+      phone: appointmentData.phone,
+      email: appointmentData.email,
+      appointment_reason: appointmentData.appointment_reason,
+      appointment_date: appointmentData.appointment_date,
+      appointment_time: appointmentData.appointment_time,
+      additional_comment: appointmentData.additional_comment || null,
+      appointment_status: "pendiente",
+      assigned_advisor_id: null,
+      item_description: null,
+      advisor_notes: null,
+      created_at: now,
+      updated_at: now,
+    });
+
+    // TODO: enviar email/WhatsApp de confirmación al cliente y notificación al staff
+
+    return NextResponse.json(
+      { message: "Cita registrada exitosamente." },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error al registrar cita:", error);
+    re

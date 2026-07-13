@@ -41,19 +41,19 @@ export default function AppointmentsTable({
 
   const filtered = useMemo(() => {
     return appointments.filter((a) => {
-      if (filters.status !== "todas" && a.appointment_status !== filters.status) return false;
-      if (filters.reason !== "todos" && a.appointment_reason !== filters.reason) return false;
+      if (filters.status !== "todas" && a.appointmentStatus !== filters.status) return false;
+      if (filters.reason !== "todos" && a.appointmentReason !== filters.reason) return false;
       if (
         filters.transactionType !== "todas" &&
         a.transaction?.transaction_type !== filters.transactionType
       )
         return false;
-      if (filters.dateFrom && a.appointment_date < filters.dateFrom) return false;
-      if (filters.dateTo && a.appointment_date > filters.dateTo) return false;
+      if (filters.dateFrom && a.appointmentDate < filters.dateFrom) return false;
+      if (filters.dateTo && a.appointmentDate > filters.dateTo) return false;
 
       if (filters.search) {
         const q = filters.search.toLowerCase();
-        const haystack = `${a.full_name} ${a.identification_number} ${a.email} ${a.phone}`.toLowerCase();
+        const haystack = `${a.fullName} ${a.identificationNumber} ${a.email} ${a.phone}`.toLowerCase();
         if (!haystack.includes(q)) return false;
       }
 
@@ -156,22 +156,22 @@ export default function AppointmentsTable({
                 onClick={() => setSelected(a)}
                 className="cursor-pointer border-b border-navy/5 transition-colors hover:bg-ivory"
               >
-                <td className="px-4 py-4 text-navy/80">{a.appointment_date}</td>
-                <td className="px-4 py-4 text-navy/80">{a.appointment_time}</td>
-                <td className="px-4 py-4 font-medium text-navy">{a.full_name}</td>
-                <td className="px-4 py-4 text-navy/70">{a.identification_number}</td>
+                <td className="px-4 py-4 text-navy/80">{a.appointmentDate}</td>
+                <td className="px-4 py-4 text-navy/80">{a.appointmentTime}</td>
+                <td className="px-4 py-4 font-medium text-navy">{a.fullName}</td>
+                <td className="px-4 py-4 text-navy/70">{a.identificationNumber}</td>
                 <td className="px-4 py-4 text-navy/70">
                   <div>{a.email}</div>
                   <div className="text-xs text-navy/50">{a.phone}</div>
                 </td>
                 <td className="px-4 py-4 text-navy/70">
-                  {APPOINTMENT_REASON_LABELS[a.appointment_reason]}
+                  {APPOINTMENT_REASON_LABELS[a.appointmentReason]}
                 </td>
                 <td className="px-4 py-4">
                   <span
-                    className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[a.appointment_status]}`}
+                    className={`rounded-full border px-3 py-1 text-xs ${APPOINTMENT_STATUS_COLORS[a.appointmentStatus]}`}
                   >
-                    {APPOINTMENT_STATUS_LABELS[a.appointment_status]}
+                    {APPOINTMENT_STATUS_LABELS[a.appointmentStatus]}
                   </span>
                 </td>
                 <td className="px-4 py-4 text-navy/70">

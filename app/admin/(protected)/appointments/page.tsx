@@ -1,15 +1,66 @@
-// Firebase imports removed - using empty array as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import AppointmentsTable from "@/components/admin/AppointmentsTable";
 import type { AppointmentWithTransaction } from "@/lib/types";
+import { db } from "@/lib/firebase/admin-config";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppointmentsPage() {
   await requireRole(["admin", "recepcion"]);
-  // TODO: Implement Firestore query for appointments with transactions
-  // For now, using empty array as fallback
-  const appointments = [] as AppointmentWithTransaction[];
+
+  let appointments: AppointmentWithTransaction[] = [];
+
+  try {
+    // Fetch appointments from Firestore
+    const appointmentsSnapshot = await db()
+      .collection("appointments")
+      .orderBy("appointmentDate", "desc")
+      .get();
+
+    appointments = await Promise.all(
+      appointmentsSnapshot.docs.map(async (doc) => {
+        const appointmentData = doc.data();
+
+        // Try to fetch transaction if exists
+        let transaction = null;
+        try {
+          const transactionDoc = await db()
+            .collection("transactions")
+            .doc(doc.id)
+            .get();
+          if (transactionDoc.exists) {
+            transaction = {
+              id: transactionDoc.id,
+              ...transactionDoc.data(),
+            } as any;
+          }
+        } catch (err) {
+          // Transaction doesn't exist, that's ok
+        }
+
+        return {
+          id: doc.id,
+          fullName: appointmentData.fullName || "",
+          identificationNumber: appointmentData.identificationNumber || "",
+          phone: appointmentData.phone || "",
+          email: appointmentData.email || "",
+          appointmentReason: (appointmentData.appointmentReason || "otro") as any,
+          appointmentDate: appointmentData.appointmentDate || "",
+          appointmentTime: appointmentData.appointmentTime || "",
+          additionalComment: appointmentData.additionalComment || null,
+          appointmentStatus: (appointmentData.appointmentStatus || "pendiente") as any,
+          assignedAdvisorId: appointmentData.assignedAdvisorId || null,
+          itemDescription: appointmentData.itemDescription || null,
+          advisorNotes: appointmentData.advisorNotes || null,
+          createdAt: appointmentData.createdAt || "",
+          updatedAt: appointmentData.updatedAt || "",
+          transaction,
+        } as AppointmentWithTransaction;
+      })
+    );
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+  }
 
   return (
     <div>
