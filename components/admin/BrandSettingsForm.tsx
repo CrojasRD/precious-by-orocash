@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, Loader2, X, CheckCircle2 } from "lucide-react";
-import { getStorage, ref, uploadBytes, getBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { initializeApp } from "firebase/app";
 import { FIREBASE_CONFIG } from "@/lib/firebase/config";
 import { updateSiteSettings } from "@/lib/actions/admin";
@@ -90,8 +90,9 @@ export default function BrandSettingsForm({
     try {
       const storageRef = ref(storage, path);
       await uploadBytes(storageRef, file);
-      // Return a placeholder URL - in production, configure Firebase Storage CDN
-      return `gs://precious-by-orocash.appspot.com/${path}`;
+      // Get the public download URL
+      const downloadUrl = await getDownloadURL(storageRef);
+      return downloadUrl;
     } catch (err: any) {
       throw new Error(err.message || "Error uploading file to Firebase Storage");
     }
