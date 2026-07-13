@@ -220,7 +220,7 @@ export default function BookingForm() {
           rows={4}
           placeholder="Cuéntanos brevemente sobre tu(s) pieza(s) o consulta"
           className="input-luxe resize-none"
-          {...register("additional_comment")}
+          {...register("additionalComment")}
         />
       </Field>
 
