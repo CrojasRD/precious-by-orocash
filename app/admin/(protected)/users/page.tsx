@@ -1,15 +1,28 @@
-// Firebase imports removed - using empty array as fallback
 import { requireRole } from "@/lib/auth/require-role";
 import UsersTable from "@/components/admin/UsersTable";
+import { db } from "@/lib/firebase/admin-config";
 import type { AppUser } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function UsersPage() {
   await requireRole(["admin"]);
-  // TODO: Implement Firestore query for users collection
-  // For now, using empty array as fallback
-  const data = [] as AppUser[];
+
+  let data: AppUser[] = [];
+
+  try {
+    // Fetch all users from Firestore
+    const usersSnapshot = await db().collection("users").get();
+    data = usersSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      name: doc.data().name || "",
+      email: doc.data().email || "",
+      role: doc.data().role || "viewer",
+      createdAt: doc.data().createdAt || "",
+    })) as AppUser[];
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
 
   return (
     <div>
