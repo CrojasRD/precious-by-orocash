@@ -59,6 +59,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WD7LR23X');`,
           }}
         />
+
+        {/* Google Analytics 4 */}
+        <Script
+          id="ga4-script"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-X4MBE0YTSZ"
+          async
+        />
+        <Script
+          id="ga4-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-X4MBE0YTSZ');
+            `,
+          }}
+        />
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}
