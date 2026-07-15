@@ -209,7 +209,9 @@ export default function BookingForm() {
         >
           <option value="">Selecciona una hora</option>
           {selectedDate && (() => {
-            const date = new Date(selectedDate);
+            // Parse fecha correctamente en zona horaria local
+            const [year, month, day] = selectedDate.split('-').map(Number);
+            const date = new Date(year, month - 1, day);
             const isSaturday = date.getDay() === 6;
             const slots = generateTimeSlots(isSaturday);
             return slots.map((t) => (
