@@ -16,15 +16,24 @@ import {
 import { APPOINTMENT_REASON_LABELS } from "@/lib/types";
 import { trackAppointmentView, trackAppointmentSubmit, trackError } from "@/lib/gtm/events";
 
-const TIME_SLOTS = [
-  { value: "09:00", label: "9:00 - 10:00 AM" },
-  { value: "10:00", label: "10:00 - 11:00 AM" },
-  { value: "11:00", label: "11:00 - 12:00 PM" },
-  { value: "14:00", label: "2:00 - 3:00 PM" },
-  { value: "15:00", label: "3:00 - 4:00 PM" },
-  { value: "16:00", label: "4:00 - 5:00 PM" },
-  { value: "17:00", label: "5:00 - 6:00 PM" },
-];
+// Generar time slots cada 30 minutos (9:00 - 18:00 / 14:00 sábado)
+function generateTimeSlots(isSaturday: boolean = false) {
+  const slots: { value: string; label: string }[] = [];
+  const endHour = isSaturday ? 14 : 18;
+
+  for (let hour = 9; hour < endHour; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+      const nextMinute = minute + 30;
+      const nextHour = nextMinute >= 60 ? hour + 1 : hour;
+      const displayMinute = nextMinute >= 60 ? 0 : nextMinute;
+      const nextTime = `${String(nextHour).padStart(2, "0")}:${String(displayMinute).padStart(2, "0")}`;
+      const label = `${time} - ${nextTime}`;
+      slots.push({ value: time, label });
+    }
+  }
+  return slots;
+}
 
 export default function BookingForm() {
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -184,11 +193,16 @@ export default function BookingForm() {
           {...register("appointmentTime", { required: "Selecciona una hora" })}
         >
           <option value="">Selecciona una hora</option>
-          {TIME_SLOTS.map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
-            </option>
-          ))}
+          {selectedDate && (() => {
+            const date = new Date(selectedDate);
+            const isSaturday = date.getDay() === 6;
+            const slots = generateTimeSlots(isSaturday);
+            return slots.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ));
+          })()}
         </select>
       </Field>
 

@@ -25,7 +25,13 @@ export default function Footer({
               Contacto
             </p>
             <p className="text-cream/70">Atención bajo cita previa</p>
-            <p className="text-cream/70">Quito, Ecuador</p>
+            <p className="text-cream/70">Guayaquil</p>
+            <a href="tel:+593967680166" className="text-cream/70 hover:text-gold-light transition">
+              +593 96 768 0166
+            </a>
+            <a href="mailto:experiencia@precious.ec" className="block text-cream/70 hover:text-gold-light transition">
+              experiencia@precious.ec
+            </a>
           </div>
           <div>
             <p className="mb-3 uppercase tracking-widest2 text-xs text-gold-light">

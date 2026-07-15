@@ -31,7 +31,12 @@ html {
 }
 
 body {
-  @apply bg-cream text-navy antialiased;
+  @apply bg-cream text-navy antialiased font-sans;
+}
+
+/* Exmouth solo en títulos */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif;
 }
 
 .container-luxe {
