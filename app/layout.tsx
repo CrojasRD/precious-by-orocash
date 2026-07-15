@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/firebase/auth-context";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 // Declare dataLayer for GTM
 declare global {
@@ -92,6 +93,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
 
         <AuthProvider>{children}</AuthProvider>
+        <WhatsAppButton />
       </body>
     </html>
   );
