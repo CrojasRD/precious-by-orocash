@@ -2,6 +2,12 @@
 
 import { MessageCircle } from "lucide-react";
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 export default function WhatsAppButton() {
   const phoneNumber = "593967680166";
   const whatsappUrl = `https://wa.me/${phoneNumber}`;
