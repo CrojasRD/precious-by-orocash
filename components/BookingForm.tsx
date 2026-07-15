@@ -137,6 +137,91 @@ export default function BookingForm() {
         {...register("website")}
       />
 
+      {/* FECHA DE VISITA - PRIMERO */}
+      <Field label="Fecha de visita" error={errors.appointmentDate?.message} full>
+        <Controller
+          control={control}
+          name="appointmentDate"
+          render={({ field }) => (
+            <div className="relative" ref={calendarRef}>
+              <button
+                type="button"
+                onClick={() => setCalendarOpen((v) => !v)}
+                className="input-luxe flex w-full items-center justify-between text-left"
+              >
+                <span className={field.value ? "text-navy" : "text-navy/40"}>
+                  {field.value
+                    ? format(new Date(field.value + "T00:00:00"), "PPP", { locale: es })
+                    : "Selecciona una fecha"}
+                </span>
+                <CalendarDays className="h-4 w-4 text-gold-dark" />
+              </button>
+
+              {calendarOpen && (
+                <div className="absolute z-20 mt-2 rounded-sm border border-navy/10 bg-cream p-3 shadow-soft">
+                  <DayPicker
+                    mode="single"
+                    locale={es}
+                    disabled={(date) => {
+                      // Deshabilita fechas pasadas y domingos
+                      return date < new Date() || date.getDay() === 0;
+                    }}
+                    selected={field.value ? new Date(field.value + "T00:00:00") : undefined}
+                    onSelect={(date) => {
+                      if (date) {
+                        field.onChange(format(date, "yyyy-MM-dd"));
+                        setCalendarOpen(false);
+                      }
+                    }}
+                    classNames={{
+                      day_selected: "bg-navy text-cream",
+                      day_today: "text-gold-dark font-semibold",
+                      day_disabled: "text-navy/20 cursor-not-allowed",
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        />
+      </Field>
+
+      {/* MOTIVO DE LA CITA - SEGUNDO */}
+      <Field label="Motivo de la cita" error={errors.appointmentReason?.message}>
+        <select
+          className="input-luxe"
+          {...register("appointmentReason", { required: "Selecciona el motivo de tu cita" })}
+        >
+          <option value="">Selecciona una opción</option>
+          {Object.entries(APPOINTMENT_REASON_LABELS).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      {/* HORA DE VISITA - TERCERO */}
+      <Field label="Hora de visita" error={errors.appointmentTime?.message}>
+        <select
+          className="input-luxe"
+          {...register("appointmentTime", { required: "Selecciona una hora" })}
+        >
+          <option value="">Selecciona una hora</option>
+          {selectedDate && (() => {
+            const date = new Date(selectedDate);
+            const isSaturday = date.getDay() === 6;
+            const slots = generateTimeSlots(isSaturday);
+            return slots.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ));
+          })()}
+        </select>
+      </Field>
+
+      {/* DATOS PERSONALES */}
       <Field label="Nombre completo" error={errors.fullName?.message} full>
         <input
           type="text"
@@ -170,83 +255,6 @@ export default function BookingForm() {
           placeholder="nombre@correo.com"
           className="input-luxe"
           {...register("email")}
-        />
-      </Field>
-
-      <Field label="Motivo de la cita" error={errors.appointmentReason?.message}>
-        <select
-          className="input-luxe"
-          {...register("appointmentReason", { required: "Selecciona el motivo de tu cita" })}
-        >
-          <option value="">Selecciona una opción</option>
-          {Object.entries(APPOINTMENT_REASON_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </Field>
-
-      <Field label="Hora de visita" error={errors.appointmentTime?.message}>
-        <select
-          className="input-luxe"
-          {...register("appointmentTime", { required: "Selecciona una hora" })}
-        >
-          <option value="">Selecciona una hora</option>
-          {selectedDate && (() => {
-            const date = new Date(selectedDate);
-            const isSaturday = date.getDay() === 6;
-            const slots = generateTimeSlots(isSaturday);
-            return slots.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ));
-          })()}
-        </select>
-      </Field>
-
-      <Field label="Fecha de visita" error={errors.appointmentDate?.message} full>
-        <Controller
-          control={control}
-          name="appointmentDate"
-          render={({ field }) => (
-            <div className="relative" ref={calendarRef}>
-              <button
-                type="button"
-                onClick={() => setCalendarOpen((v) => !v)}
-                className="input-luxe flex w-full items-center justify-between text-left"
-              >
-                <span className={field.value ? "text-navy" : "text-navy/40"}>
-                  {field.value
-                    ? format(new Date(field.value + "T00:00:00"), "PPP", { locale: es })
-                    : "Selecciona una fecha"}
-                </span>
-                <CalendarDays className="h-4 w-4 text-gold-dark" />
-              </button>
-
-              {calendarOpen && (
-                <div className="absolute z-20 mt-2 rounded-sm border border-navy/10 bg-cream p-3 shadow-soft">
-                  <DayPicker
-                    mode="single"
-                    locale={es}
-                    disabled={{ before: new Date() }}
-                    selected={field.value ? new Date(field.value + "T00:00:00") : undefined}
-                    onSelect={(date) => {
-                      if (date) {
-                        field.onChange(format(date, "yyyy-MM-dd"));
-                        setCalendarOpen(false);
-                      }
-                    }}
-                    classNames={{
-                      day_selected: "bg-navy text-cream",
-                      day_today: "text-gold-dark font-semibold",
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          )}
         />
       </Field>
 

@@ -106,7 +106,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   brandName: "PRECIOUS",
   brandSubtitle: "by Orocash",
   heroBannerUrl: null,
-  logoImageUrl: null,
+  logoImageUrl: "/media/logo/Precious.png",
 };
 
 export type UserRole = "admin" | "editor" | "asesor" | "recepcion" | "viewer";
