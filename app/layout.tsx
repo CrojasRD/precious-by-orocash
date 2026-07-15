@@ -22,21 +22,33 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Precious by Orocash | Asesoría especializada en oro",
+  title: "Comprar y Vender Joyas de Oro en Guayaquil, Samborondón | Precious by Orocash",
   description:
-    "Valuación, inversión y asesoría en oro y gemas para inversionistas, herederos y empresarios. Tasadores certificados, confidencialidad total. Agenda tu consultoría.",
+    "Expertos en compraventa de joyas de oro, diamantes, gemas y esmeraldas en Guayaquil, Samborondón y La Puntilla. Valoración discreta y privada. Tasadores certificados en gemología y relojería. Inversión en metales preciosos.",
   keywords: [
-    "asesoría en oro",
-    "valuación de oro",
-    "inversión en metales preciosos",
-    "retroventa de joyas",
-    "Orocash",
+    "comprar joyas de oro Guayaquil",
+    "vender joyas de oro Samborondón",
+    "comprar diamantes Guayaquil",
+    "comprar gemas preciosas Ecuador",
+    "esmeraldas rubí Guayaquil",
+    "valorar joyas Samborondón",
+    "tasadores certificados Guayaquil",
+    "expertos gemología relojería Ecuador",
+    "Argos Plaza Guayaquil",
+    "La Puntilla Samborondón",
+    "inversión metales preciosos",
+    "retroventa joyas",
+    "asesoría en oro Ecuador",
   ],
   openGraph: {
-    title: "Precious by Orocash",
-    description: "Valuación, inversión y asesoría en oro y gemas.",
+    title: "Comprar y Vender Joyas de Oro en Guayaquil | Precious by Orocash",
+    description: "Expertos en valoración y compraventa de joyas, diamantes y gemas. Confidencial y discreto.",
     type: "website",
     locale: "es_EC",
+    url: "https://precious.ec",
+  },
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
@@ -48,6 +60,56 @@ export default function RootLayout({
   return (
     <html lang="es" className={body.variable}>
       <head>
+        {/* Schema.org JSON-LD for Local Business */}
+        <Script
+          id="schema-org"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: "Precious by Orocash",
+              description: "Expertos en compraventa de joyas de oro, diamantes y gemas en Guayaquil y Samborondón",
+              url: "https://precious.ec",
+              telephone: "+593967680166",
+              email: "experiencia@precious.ec",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Guayaquil",
+                addressLocality: "Guayaquil",
+                addressRegion: "Guayas",
+                postalCode: "090513",
+                addressCountry: "EC"
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: "-2.1632",
+                longitude: "-79.8935"
+              },
+              image: "https://precious.ec/media/logo/Precious.png",
+              priceRange: "$$",
+              areaServed: [
+                {
+                  "@type": "City",
+                  name: "Guayaquil"
+                },
+                {
+                  "@type": "City",
+                  name: "Samborondón"
+                },
+                {
+                  "@type": "City",
+                  name: "La Puntilla"
+                }
+              ],
+              sameAs: [
+                "https://www.facebook.com/precious",
+                "https://www.instagram.com/precious"
+              ]
+            }),
+          }}
+        />
+
         {/* Google Tag Manager */}
         <Script
           id="gtm-script"
