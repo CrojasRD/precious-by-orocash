@@ -35,11 +35,11 @@ export default function Hero({ bannerUrl }: { bannerUrl?: string | null }) {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs uppercase tracking-widest2 text-cream/50">
-            <span>Tasadores certificados</span>
+            <span>Tasación de joyas certificada</span>
             <span className="text-gold-light/40">|</span>
-            <span>Valuación transparente</span>
+            <span>Precious joyería Guayaquil</span>
             <span className="text-gold-light/40">|</span>
-            <span>Inversión en metales preciosos</span>
+            <span>Vender mis joyas en Samborondón</span>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">

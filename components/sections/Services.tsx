@@ -3,37 +3,37 @@ import { Gem, TrendingUp, RefreshCw, Handshake, Building2 } from "lucide-react";
 const services = [
   {
     icon: Gem,
-    title: "Valuación profesional",
+    title: "Tasación de Joyas - Precious",
     description:
-      "¿Cuánto realmente vale tu oro? Tasación certificada, informe detallado, asesoría transparente.",
+      "¿Cuánto realmente valen mis joyas? Precious ofrece tasación certificada, informe detallado. Tasar joyas de oro, diamantes y gemas en Guayaquil y Samborondón.",
     audience: "Para: herederos, inversionistas",
   },
   {
     icon: TrendingUp,
-    title: "Asesoría de inversión",
+    title: "Asesoría de Inversión en Oro",
     description:
-      "Oro como activo de diversificación. Estrategia personalizada, análisis de mercado, horizonte claro.",
+      "Precious joyería - Oro como activo de diversificación. Estrategia personalizada, análisis de mercado en Ecuador, horizonte claro para tu inversión.",
     audience: "Para: inversionistas sofisticados",
   },
   {
     icon: RefreshCw,
-    title: "Retroventa de joyas",
+    title: "Compra y Venta de Joyas",
     description:
-      "Liquidación con recompra garantizada. Márgenes claros, proceso rápido, sin sorpresas financieras.",
+      "Vender mis joyas de forma segura en Precious. Compra de joyas de oro, diamantes y gemas. Retroventa con márgenes claros, proceso rápido.",
     audience: "Para: quienes buscan liquidez",
   },
   {
     icon: Handshake,
-    title: "Consultoría especializada",
+    title: "Consultoría Especializada - Precious",
     description:
-      "¿Vendo, invierto o conservo? Asesor experto, perspectiva objetiva, decisión informada y confidencial.",
+      "¿Vendo joyas, invierto en oro o conservo? Precious Guayaquil y Samborondón: asesor experto, perspectiva objetiva, decisión informada y confidencial.",
     audience: "Para: todos los clientes",
   },
   {
     icon: Building2,
-    title: "Atención privada en Samborondón",
+    title: "Atención Privada en Samborondón - Precious",
     description:
-      "Reunión 1 a 1, sin interrupciones. Confidencialidad garantizada, tiempo real con experto certificado.",
+      "Precious joyería en Samborondón: Reunión 1 a 1, sin interrupciones. Valorar joyas y diamantes con confidencialidad garantizada, experto certificado.",
     audience: "Para: todas las consultas",
   },
 ];
