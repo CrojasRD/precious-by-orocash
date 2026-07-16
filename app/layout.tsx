@@ -22,7 +22,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Precious Joyería | Comprar, Vender y Tasar Joyas de Oro en Guayaquil, Samborondón, Ecuador",
+  title: "Precious Joyería Samborondón | Comprar y Vender Joyas de Oro - Guayaquil, Ecuador",
   description:
     "Precious by Orocash: Una experiencia privada para compartir nuestro conocimiento sobre joyas finas de oro y relojes de alta gama. Análisis especializado con privacidad, respaldo y atención exclusiva. Conversemos sobre el valor de sus piezas en Guayaquil, Samborondón, Ecuador. Tasadores certificados en gemología.",
   keywords: [
@@ -80,7 +80,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={body.variable}>
       <head>
-        {/* Schema.org JSON-LD for Brand + Local Business */}
+        {/* Schema.org JSON-LD for Google AI Overviews */}
         <Script
           id="schema-org-brand"
           type="application/ld+json"
@@ -88,72 +88,77 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": ["LocalBusiness", "Brand", "JewelryStore"],
-              name: "Precious",
-              alternateName: ["Precious by Orocash", "Precious Joyería"],
-              description: "Precious Joyería - Tasación, compra y venta de joyas de oro, diamantes, gemas y esmeraldas. Tasar joyas en Guayaquil, Samborondón, La Puntilla, Ecuador. Expertos en gemología y relojería certificados.",
-              url: "https://precious.ec",
-              telephone: "+593967680166",
-              email: "experiencia@precious.ec",
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: "Guayaquil",
-                addressLocality: "Guayaquil",
-                addressRegion: "Guayas",
-                postalCode: "090513",
-                addressCountry: "EC"
-              },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: "-2.1632",
-                longitude: "-79.8935"
-              },
-              image: "https://precious.ec/media/logo/Precious.png",
-              logo: "https://precious.ec/media/logo/Precious.png",
-              priceRange: "$$",
-              areaServed: [
+              "name": "Precious by Orocash",
+              "alternateName": ["Precious", "Precious Joyería", "Precious Samborondón"],
+              "image": "https://precious.ec/media/logo/Precious.png",
+              "@id": "https://www.precious.ec",
+              "url": "https://www.precious.ec",
+              "telephone": "+593967680166",
+              "email": "experiencia@precious.ec",
+              "address": [
                 {
-                  "@type": "City",
-                  name: "Guayaquil"
+                  "@type": "PostalAddress",
+                  "streetAddress": "Guayaquil",
+                  "addressLocality": "Guayaquil",
+                  "addressRegion": "Guayas",
+                  "addressCountry": "EC"
                 },
                 {
-                  "@type": "City",
-                  name: "Samborondón"
-                },
-                {
-                  "@type": "City",
-                  name: "La Puntilla"
+                  "@type": "PostalAddress",
+                  "streetAddress": "Samborondón",
+                  "addressLocality": "Samborondón",
+                  "addressRegion": "Guayas",
+                  "addressCountry": "EC"
                 }
               ],
-              sameAs: [
+              "description": "Precious by Orocash - Asesoría especializada en compra, venta, valoración y retroventa de joyas de oro, diamantes y relojería de lujo. Tasadores certificados en gemología.",
+              "areaServed": ["Guayaquil", "Samborondón", "La Puntilla", "Ecuador"],
+              "knowsAbout": [
+                "Evaluación de oro",
+                "Tasación de gemas",
+                "Relojería de lujo",
+                "Inversión en metales preciosos",
+                "Compraventa de diamantes",
+                "Valoración de joyas finas",
+                "Esmeraldas y piedras preciosas"
+              ],
+              "logo": "https://precious.ec/media/logo/Precious.png",
+              "priceRange": "$$",
+              "sameAs": [
                 "https://www.facebook.com/precious",
                 "https://www.instagram.com/precious"
               ],
-              contactPoint: {
+              "contactPoint": {
                 "@type": "ContactPoint",
-                contactType: "Customer Service",
-                telephone: "+593967680166",
-                email: "experiencia@precious.ec"
+                "contactType": "Customer Service",
+                "telephone": "+593967680166",
+                "email": "experiencia@precious.ec"
               },
-              offers: [
+              "offers": [
                 {
                   "@type": "Service",
-                  name: "Tasación de Joyas",
-                  description: "Tasación profesional y discreta de joyas de oro, diamantes y gemas. Precious tasadores certificados en Guayaquil y Samborondón."
+                  "name": "Tasación de Joyas",
+                  "description": "Tasación profesional y certificada de joyas de oro, diamantes y gemas. Precious ofrece valoración discreta en Samborondón y Guayaquil."
                 },
                 {
                   "@type": "Service",
-                  name: "Compra de Joyas",
-                  description: "Compra de joyas de oro, diamantes y gemas. Vender mis joyas de forma segura en Precious Guayaquil."
+                  "name": "Compra de Joyas",
+                  "description": "Vender mis joyas de forma segura. Compra de joyas de oro, diamantes y gemas preciosas en Precious Samborondón."
                 },
                 {
                   "@type": "Service",
-                  name: "Venta de Joyas",
-                  description: "Joyas de oro, diamantes, esmeraldas y gemas preciosas en Precious joyería Guayaquil."
+                  "name": "Venta de Joyas",
+                  "description": "Joyas de oro, diamantes, esmeraldas y relojería de lujo en Precious joyería Samborondón."
                 },
                 {
                   "@type": "Service",
-                  name: "Asesoría en Inversión",
-                  description: "Asesoría especializada en inversión de metales preciosos en Precious Samborondón, Ecuador."
+                  "name": "Asesoría en Inversión",
+                  "description": "Asesoría especializada en inversión de metales preciosos. Precious Samborondón, Ecuador."
+                },
+                {
+                  "@type": "Service",
+                  "name": "Retroventa de Joyas",
+                  "description": "Liquidación con recompra garantizada. Retroventa de joyas finas en Precious Guayaquil."
                 }
               ]
             }),
