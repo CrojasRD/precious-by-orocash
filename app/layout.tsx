@@ -22,10 +22,13 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Comprar y Vender Joyas de Oro en Guayaquil, Samborondón | Precious by Orocash",
+  title: "Precious | Comprar y Vender Joyas de Oro en Guayaquil, Samborondón",
   description:
-    "Expertos en compraventa de joyas de oro, diamantes, gemas y esmeraldas en Guayaquil, Samborondón y La Puntilla. Valoración discreta y privada. Tasadores certificados en gemología y relojería. Inversión en metales preciosos.",
+    "Precious by Orocash - Expertos en compraventa de joyas de oro, diamantes, gemas y esmeraldas en Guayaquil, Samborondón y La Puntilla. Valoración discreta y privada. Tasadores certificados en gemología y relojería.",
   keywords: [
+    "Precious",
+    "Precious Orocash",
+    "Precious Guayaquil",
     "comprar joyas de oro Guayaquil",
     "vender joyas de oro Samborondón",
     "comprar diamantes Guayaquil",
@@ -60,16 +63,17 @@ export default function RootLayout({
   return (
     <html lang="es" className={body.variable}>
       <head>
-        {/* Schema.org JSON-LD for Local Business */}
+        {/* Schema.org JSON-LD for Brand + Local Business */}
         <Script
-          id="schema-org"
+          id="schema-org-brand"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              name: "Precious by Orocash",
-              description: "Expertos en compraventa de joyas de oro, diamantes y gemas en Guayaquil y Samborondón",
+              "@type": ["LocalBusiness", "Brand"],
+              name: "Precious",
+              alternateName: "Precious by Orocash",
+              description: "Precious - Expertos en compraventa de joyas de oro, diamantes y gemas en Guayaquil y Samborondón. Tasadores certificados en gemología.",
               url: "https://precious.ec",
               telephone: "+593967680166",
               email: "experiencia@precious.ec",
@@ -87,6 +91,7 @@ export default function RootLayout({
                 longitude: "-79.8935"
               },
               image: "https://precious.ec/media/logo/Precious.png",
+              logo: "https://precious.ec/media/logo/Precious.png",
               priceRange: "$$",
               areaServed: [
                 {
@@ -105,7 +110,13 @@ export default function RootLayout({
               sameAs: [
                 "https://www.facebook.com/precious",
                 "https://www.instagram.com/precious"
-              ]
+              ],
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "Customer Service",
+                telephone: "+593967680166",
+                email: "experiencia@precious.ec"
+              }
             }),
           }}
         />

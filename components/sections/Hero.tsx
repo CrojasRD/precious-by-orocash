@@ -18,20 +18,20 @@ export default function Hero({ bannerUrl }: { bannerUrl?: string | null }) {
 
       <div className="container-luxe relative z-10 grid items-center gap-16 py-20 md:grid-cols-2">
         <div className="animate-fade-up">
-          <p className="eyebrow text-gold-light">Asesoría especializada en oro</p>
+          <p className="eyebrow text-gold-light">Asesoría especializada en oro - Precious Guayaquil</p>
 
           <h1 className="mt-6 font-serif text-4xl leading-tight text-cream sm:text-5xl lg:text-6xl">
             Precious <span className="text-gold-light">by Orocash</span>
           </h1>
 
           <p className="mt-6 max-w-md text-lg text-cream/80">
-            Valuación, inversión y asesoría en oro y gemas.
+            <strong>Precious:</strong> Compra, venta y valoración de joyas de oro, diamantes y gemas en Guayaquil y Samborondón.
           </p>
 
           <p className="mt-4 max-w-md text-sm leading-relaxed text-cream/60">
-            Para inversionistas, herederos y empresarios que necesitan
-            expertise real. Tasadores certificados, confidencialidad total,
-            decisiones informadas.
+            Precious es tu aliado de confianza para inversionistas, herederos y empresarios que necesitan
+            expertise real. Tasadores certificados en gemología y relojería, confidencialidad total,
+            decisiones informadas. Precious Guayaquil y Precious Samborondón.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-xs uppercase tracking-widest2 text-cream/50">
